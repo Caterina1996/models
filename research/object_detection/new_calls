@@ -1,0 +1,162 @@
+#NEW CALLS:
+
+
+1) Preprocess - Generate TFRECORDS:
+
+$ python xml_to_csv.py --folder /home/object/caterina/HALIMEDA_TEST/ (Ell ja afegeix images)
+$ python3 generate_tfrecord.py --folder /home/object/caterina/HALIMEDA_TEST/images
+
+NEW train:
+
+python object_detection/model_main_tf2.py --pipeline_config_path= /home/object/models/research/object_detection/training/new_halimeda.config --model_dir=/home/object/models/research/object_detection/RUNS/halimeda_test --alsologtostderr
+
+python object_detection/model_main_tf2.py --pipeline_config_path= /home/object/models/research/object_detection/training/faster_rcnn_inc_halimeda_pipeline.config
+ --model_dir=/home/object/models/research/object_detection/RUNS/halimeda_test --alsologtostderr
+
+
+python object_detection/model_main_tf2.py --pipeline_config_path= /home/object/models/research/object_detection/training/faster_rcnn_resnet101_v1_1024x1024_coco17_tpu-8.config --model_dir=/home/object/models/research/object_detection/RUNS/halimeda_test --alsologtostderr
+
+python object_detection/model_main_tf2.py --pipeline_config_path= /home/object/models/research/object_detection/training/ssd_mobilenet_v1_fpn_640x640_coco17_tpu-8.config --model_dir=/home/object/models/research/object_detection/RUNS/halimeda_test --alsologtostderr
+
+faster_rcnn_resnet101_v1_1024x1024_coco17_tpu-8.config
+
+
+models/research/object_detection/configs/tf2/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.config
+python object_detection/model_main_tf2.py --pipeline_config_path= /home/object/models/research/object_detection/configs/tf2/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.config --model_dir=/home/object/models/research/object_detection/RUNS/halimeda_test --alsologtostderr
+
+
+POST_TUTORIAL:
+
+
+<path to your config file> :
+
+	/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/pipeline.config
+	
+<path to a directory with your model> 
+
+	/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/model_outputs
+	
+<int for the number of steps per checkpoint>
+	
+	200 per exemple
+	
+	
+python model_main_tf2.py --model_dir=$MODEL_DIR --num_train_steps=1 --sample_1_of_n_eval_examples=$SAMPLE_1_OF_N_EVAL_EXAMPLES \
+  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
+  --alsologtostderr
+
+
+
+python3 model_main_tf2.py -- \
+  --model_dir="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/model_outputs" --num_train_steps=200 \
+  --sample_1_of_n_eval_examples=8 \
+  --pipeline_config_path="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/pipeline.config" \
+  --alsologtostderr
+
+  File "/home/object/.local/lib/python3.8/site-packages/tensorflow/python/lib/io/file_io.py", line 76, in _preread_check
+    self._read_buf = _pywrap_file_io.BufferedInputStream(
+TypeError: __init__(): incompatible constructor arguments. The following argument types are supported:
+    1. tensorflow.python.lib.io._pywrap_file_io.BufferedInputStream(filename: str, buffer_size: int, token: tensorflow.python.lib.io._pywrap_file_io.TransactionToken = None)
+
+
+
+LATEST EROR 25/02:
+
+2022-02-25 13:08:58.859222: W tensorflow/core/common_runtime/bfc_allocator.cc:474] ******__******_________********______*_*_____******_________________________________________________
+2022-02-25 13:08:58.859256: W tensorflow/core/framework/op_kernel.cc:1745] OP_REQUIRES failed at gather_op.cc:158 : RESOURCE_EXHAUSTED: OOM when allocating tensor with shape[15052800,1024] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc
+Traceback (most recent call last):
+
+...
+
+ File "/home/object/.local/lib/python3.8/site-packages/tensorflow/python/eager/execute.py", line 54, in quick_execute
+    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,
+tensorflow.python.framework.errors_impl.ResourceExhaustedError: Graph execution error:
+
+
+...
+
+Node: 'MultiLevelMatMulCropAndResize/MultiLevelRoIAlign/GatherV2_1'
+OOM when allocating tensor with shape[15052800,1024] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc
+	 [[{{node MultiLevelMatMulCropAndResize/MultiLevelRoIAlign/GatherV2_1}}]]
+Hint: If you want to see a list of allocated tensors when OOM happens, add report_tensor_allocations_upon_oom to RunOptions for current allocation info. This isn't available when running in Eager mode.
+ [Op:__inference__dummy_computation_fn_195108]
+
+
+
+
+
+
+ERROR -> 
+
+
+
+
+
+Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+
+tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+
+The versions of TensorFlow you are currently using is 2.8.0 and is not supported. 
+Some things might work, some things might not.
+If you were to encounter a bug, do not file an issue.
+If you want to make sure you're using a tested and supported configuration, either change the TensorFlow version or the TensorFlow Addons's version. 
+You can find the compatibility matrix in TensorFlow Addon's readme:
+
+NEW_ERRORS:
+
+
+UserWarning: Tensorflow Addons supports using Python ops for all Tensorflow versions above or equal to 2.5.0 and strictly below 2.8.0 (nightly versions are not supported). 
+ The versions of TensorFlow you are currently using is 2.8.0 and is not supported. 
+
+Python 2.8 és massa nou :( -> Per arreglar-ho pip install tensorflow-addons (canviam a la última versió de tf addons)
+
+
+PENDING TO SOLVE:
+
+Traceback (most recent call last):
+  File "object_detection/model_main_tf2.py", line 115, in <module>
+    tf.compat.v1.app.run()
+  File "/home/object/.local/lib/python3.8/site-packages/tensorflow/python/platform/app.py", line 36, in run
+    _run(main=main, argv=argv, flags_parser=_parse_flags_tolerate_undef)
+  File "/home/object/.local/lib/python3.8/site-packages/absl/app.py", line 312, in run
+    _run_main(main, args)
+  File "/home/object/.local/lib/python3.8/site-packages/absl/app.py", line 258, in _run_main
+    sys.exit(main(argv))
+  File "object_detection/model_main_tf2.py", line 106, in main
+    model_lib_v2.train_loop(
+  File "/home/object/.local/lib/python3.8/site-packages/object_detection/model_lib_v2.py", line 504, in train_loop
+    configs = get_configs_from_pipeline_file(
+  File "/home/object/.local/lib/python3.8/site-packages/object_detection/utils/config_util.py", line 138, in get_configs_from_pipeline_file
+    proto_str = f.read()
+  File "/home/object/.local/lib/python3.8/site-packages/tensorflow/python/lib/io/file_io.py", line 114, in read
+    self._preread_check()
+  File "/home/object/.local/lib/python3.8/site-packages/tensorflow/python/lib/io/file_io.py", line 76, in _preread_check
+    self._read_buf = _pywrap_file_io.BufferedInputStream(
+tensorflow.python.framework.errors_impl.NotFoundError: ; No such file or directory
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OLD TRAIN:
+python3 train.py --logtostderr --train_dir=RUNS/halimeda_test/ --pipeline_config_path=training/halimeda_test/new_halimeda.config
+
+
+tf_upgrade_v2 \
+--intree train.py
+--outtree train_v2.py
+--reportfile report.txt
+
+
+
