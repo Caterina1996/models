@@ -9,11 +9,14 @@
 
 PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/test_params/pipeline.config"
 
-MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/test_params/model_outputs"
+MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/test_params/model_outputs_3"
 
-NUM_TRAIN_STEPS=2000
+NUM_TRAIN_STEPS=1600
 SAMPLE_1_OF_N_EVAL_EXAMPLES=1
-CHECKPOINT_EVERY_N=200  #num steps fets per guardar un checkpoint.Per cada step el model processa batch_size imatges
+CHECKPOINT_EVERY_N=100  #num steps fets per guardar un checkpoint.Per cada step el model processa batch_size imatges
+NUM_STEPS_PER_ITERATION=200
+CHECKPOINT_MAX_TO_KEEP=3
+
 
 # num_workers-> Amb aquest parametre podem indicar quants dels cores de la CPU (que a Olivia és multicore) volem usar.
 #Pot ser amb num_workers limitat ja no petaria? -> Posar al màxim?
@@ -24,6 +27,8 @@ python3 model_main_tf2.py --model_dir=$MODEL_DIR --num_train_steps=$NUM_TRAIN_ST
   --sample_1_of_n_eval_examples=$SAMPLE_1_OF_N_EVAL_EXAMPLES \
   --pipeline_config_path=$PIPELINE_CONFIG_PATH \
   --checkpoint_every_n=$CHECKPOINT_EVERY_N \
+  --num_steps_per_iteration=$NUM_STEPS_PER_ITERATION \
+  --checkpoint_max_to_keep=$CHECKPOINT_MAX_TO_KEEP \
   --alsologtostderr
 
 

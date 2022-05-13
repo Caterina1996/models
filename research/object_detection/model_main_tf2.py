@@ -72,11 +72,12 @@ flags.DEFINE_boolean('record_summaries', True,
                       ' recorded.'))
 
 flags.DEFINE_bool('post_train_evaluation', True, 'Evaluation after training')
-
+flags.DEFINE_integer('num_steps_per_iteration', 100, 'Number of ssteps per iteration') # a tensorboard aixo fixa cada quan hi ha info del train
+flags.DEFINE_integer('checkpoint_max_to_keep', 100, 'Number of ssteps per iteration') # a tensorboard aixo fixa cada quan hi ha info del train
 
 FLAGS = flags.FLAGS
-CHECKPOINT_MAX_TO_KEEP=50
-NUM_STEPS_PER_ITERATION=100
+# CHECKPOINT_MAX_TO_KEEP=3
+# NUM_STEPS_PER_ITERATION=FLAGS.num_steps_per_iteration
 
 def main(unused_argv):
   flags.mark_flag_as_required('model_dir')
@@ -85,8 +86,8 @@ def main(unused_argv):
 
   print("MAINNNNNNNNNNNNNNNN FLAGS.checkpoint_every_n is",FLAGS.checkpoint_every_n)
   print("MAINNNNNNNNNNNNNNNN FLAGS.num_train_steps",FLAGS.num_train_steps)
-  print("MAINNNNNNNNNNNNN NUM STEPS PER ITERATION IS: ",NUM_STEPS_PER_ITERATION)
-  print("MAINNNNNNNNNNNNN CHECKPOINT_MAX_TO_KEEP: ",CHECKPOINT_MAX_TO_KEEP)
+  print("MAINNNNNNNNNNNNN NUM STEPS PER ITERATION IS: ",FLAGS.num_steps_per_iteration)
+  print("MAINNNNNNNNNNNNN CHECKPOINT_MAX_TO_KEEP: ",FLAGS.checkpoint_max_to_keep)
   print("MAINNNNNNNNNNNNN FLAGS.post_train_evaluation: ", FLAGS.post_train_evaluation)
 
   if FLAGS.checkpoint_dir:
@@ -129,8 +130,8 @@ def main(unused_argv):
     with strategy.scope():
       model_lib_v2.train_loop(
           pipeline_config_path=FLAGS.pipeline_config_path,
-          checkpoint_max_to_keep=CHECKPOINT_MAX_TO_KEEP, 
-          num_steps_per_iteration=NUM_STEPS_PER_ITERATION, 
+          checkpoint_max_to_keep=FLAGS.checkpoint_max_to_keep, 
+          num_steps_per_iteration=FLAGS.num_steps_per_iteration, 
           model_dir=FLAGS.model_dir,
           train_steps=FLAGS.num_train_steps,
           use_tpu=FLAGS.use_tpu,

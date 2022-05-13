@@ -457,12 +457,12 @@ def train_loop(
     num_steps_per_iteration=NUM_STEPS_PER_ITERATION,
     **kwargs):
 
-    print("111111111111111111111111111111111111111111111111111111111111 INSIDE TRAINING LOOP,NUM_STEPS_PER_ITERATION is ",num_steps_per_iteration)
-    print("")
-    print("22222222222222222222222222222222222222222222222222 INSIDE TRAINING LOOP,checkpoint_max_to_keep=None,is ", checkpoint_max_to_keep)
-    print("")
-    print("333333333333333333333333333333333333333333333333333 INSIDE TRAINING LOOP,checkpoint_every_n is ",checkpoint_every_n)
-    print("")
+  print("111111111111111111111111111111111111111111111111111111111111 INSIDE TRAINING LOOP,NUM_STEPS_PER_ITERATION is ",num_steps_per_iteration)
+  print("")
+  print("22222222222222222222222222222222222222222222222222 INSIDE TRAINING LOOP,checkpoint_max_to_keep=None,is ", checkpoint_max_to_keep)
+  print("")
+  print("333333333333333333333333333333333333333333333333333 INSIDE TRAINING LOOP,checkpoint_every_n is ",checkpoint_every_n)
+  print("")
 
 
 
