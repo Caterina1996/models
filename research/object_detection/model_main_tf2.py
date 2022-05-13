@@ -30,6 +30,7 @@ python model_main_tf2.py -- \
 from absl import flags
 import tensorflow.compat.v2 as tf
 from object_detection import model_lib_v2
+from object_detection import eval_post_train
 
 flags.DEFINE_string('pipeline_config_path', None, 'Path to pipeline config '
                     'file.')
@@ -70,24 +71,47 @@ flags.DEFINE_boolean('record_summaries', True,
                       ' summaries of the loss values which are always'
                       ' recorded.'))
 
-FLAGS = flags.FLAGS
+flags.DEFINE_bool('post_train_evaluation', True, 'Evaluation after training')
 
+
+FLAGS = flags.FLAGS
+CHECKPOINT_MAX_TO_KEEP=50
+NUM_STEPS_PER_ITERATION=100
 
 def main(unused_argv):
   flags.mark_flag_as_required('model_dir')
   flags.mark_flag_as_required('pipeline_config_path')
   tf.config.set_soft_device_placement(True)
 
+  print("MAINNNNNNNNNNNNNNNN FLAGS.checkpoint_every_n is",FLAGS.checkpoint_every_n)
+  print("MAINNNNNNNNNNNNNNNN FLAGS.num_train_steps",FLAGS.num_train_steps)
+  print("MAINNNNNNNNNNNNN NUM STEPS PER ITERATION IS: ",NUM_STEPS_PER_ITERATION)
+  print("MAINNNNNNNNNNNNN CHECKPOINT_MAX_TO_KEEP: ",CHECKPOINT_MAX_TO_KEEP)
+  print("MAINNNNNNNNNNNNN FLAGS.post_train_evaluation: ", FLAGS.post_train_evaluation)
+
   if FLAGS.checkpoint_dir:
-    model_lib_v2.eval_continuously(
-        pipeline_config_path=FLAGS.pipeline_config_path,
-        model_dir=FLAGS.model_dir,
-        train_steps=FLAGS.num_train_steps,
-        sample_1_of_n_eval_examples=FLAGS.sample_1_of_n_eval_examples,
-        sample_1_of_n_eval_on_train_examples=(
-            FLAGS.sample_1_of_n_eval_on_train_examples),
-        checkpoint_dir=FLAGS.checkpoint_dir,
-        wait_interval=300, timeout=FLAGS.eval_timeout)
+      if FLAGS.post_train_evaluation==True:
+          
+        eval_post_train.eval_continuously(
+          pipeline_config_path=FLAGS.pipeline_config_path,
+          model_dir=FLAGS.model_dir,
+          train_steps=FLAGS.num_train_steps,
+          sample_1_of_n_eval_examples=FLAGS.sample_1_of_n_eval_examples,
+          sample_1_of_n_eval_on_train_examples=(
+              FLAGS.sample_1_of_n_eval_on_train_examples),
+          checkpoint_dir=FLAGS.checkpoint_dir,
+          wait_interval=10, timeout=FLAGS.eval_timeout)
+            
+      else:
+        model_lib_v2.eval_continuously(
+            pipeline_config_path=FLAGS.pipeline_config_path,
+            model_dir=FLAGS.model_dir,
+            train_steps=FLAGS.num_train_steps,
+            sample_1_of_n_eval_examples=FLAGS.sample_1_of_n_eval_examples,
+            sample_1_of_n_eval_on_train_examples=(
+                FLAGS.sample_1_of_n_eval_on_train_examples),
+            checkpoint_dir=FLAGS.checkpoint_dir,
+            wait_interval=10, timeout=FLAGS.eval_timeout)
   else:
     if FLAGS.use_tpu:
       # TPU is automatically inferred if tpu_name is None and
@@ -105,6 +129,8 @@ def main(unused_argv):
     with strategy.scope():
       model_lib_v2.train_loop(
           pipeline_config_path=FLAGS.pipeline_config_path,
+          checkpoint_max_to_keep=CHECKPOINT_MAX_TO_KEEP, 
+          num_steps_per_iteration=NUM_STEPS_PER_ITERATION, 
           model_dir=FLAGS.model_dir,
           train_steps=FLAGS.num_train_steps,
           use_tpu=FLAGS.use_tpu,

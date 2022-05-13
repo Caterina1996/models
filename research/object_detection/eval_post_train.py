@@ -43,7 +43,7 @@ import glob
 
 
 MODEL_BUILD_UTIL_MAP = model_lib.MODEL_BUILD_UTIL_MAP
-NUM_STEPS_PER_ITERATION = 50
+NUM_STEPS_PER_ITERATION = 100
 
 
 RESTORE_MAP_ERROR_TEMPLATE = (
@@ -51,6 +51,14 @@ RESTORE_MAP_ERROR_TEMPLATE = (
     ' restore_map was expected to return a (str -> Model) mapping,'
     ' but we received a ({} -> {}) mapping instead.'
 )
+
+
+#Helper function to sort all ckpts to evaluate all
+def natural_sort(l): 
+  convert = lambda text: int(text) if text.isdigit() else text.lower() 
+  alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+  return sorted(l, key = alphanum_key)
+
 
 
 def _compute_losses_and_predictions_dicts(
@@ -456,16 +464,6 @@ def train_loop(
     performance_summary_exporter=None,
     num_steps_per_iteration=NUM_STEPS_PER_ITERATION,
     **kwargs):
-
-    print("111111111111111111111111111111111111111111111111111111111111 INSIDE TRAINING LOOP,NUM_STEPS_PER_ITERATION is ",num_steps_per_iteration)
-    print("")
-    print("22222222222222222222222222222222222222222222222222 INSIDE TRAINING LOOP,checkpoint_max_to_keep=None,is ", checkpoint_max_to_keep)
-    print("")
-    print("333333333333333333333333333333333333333333333333333 INSIDE TRAINING LOOP,checkpoint_every_n is ",checkpoint_every_n)
-    print("")
-
-
-
   """Trains a model using eager + functions.
 
   This method:
@@ -529,17 +527,6 @@ def train_loop(
   unpad_groundtruth_tensors = train_config.unpad_groundtruth_tensors
   add_regularization_loss = train_config.add_regularization_loss
   clip_gradients_value = None
-
-  print("4444444444444444444444444444444444444444444444444 INSIDE TRAINING LOOP,NUM_STEPS_PER_ITERATION is ",num_steps_per_iteration)
-  print("")
-  print("555555555555555555555555555555555555555555555555555 INSIDE TRAINING LOOP,checkpoint_max_to_keep=None,is ", checkpoint_max_to_keep)
-  print("")
-  print("6666666666666666666666666666666666666666666666666666666 INSIDE TRAINING LOOP,checkpoint_every_n is ",checkpoint_every_n)
-  print("")
-
-
-
-  
   if train_config.gradient_clipping_by_norm > 0:
     clip_gradients_value = train_config.gradient_clipping_by_norm
 
@@ -1157,8 +1144,10 @@ def eval_continuously(
   optimizer, _ = optimizer_builder.build(
       configs['train_config'].optimizer, global_step=global_step)
 
-  for latest_checkpoint in tf.train.checkpoints_iterator(
-      checkpoint_dir, timeout=timeout, min_interval_secs=wait_interval):
+#   for latest_checkpoint in tf.train.checkpoints_iterator(
+#       checkpoint_dir, timeout=timeout, min_interval_secs=wait_interval):
+  for latest_checkpoint in natural_sort(list(set(map(lambda n: n[:n.index(".")], glob.glob(f"{checkpoint_dir}/ckpt-*.*"))))): 
+
     ckpt = tf.compat.v2.train.Checkpoint(
         step=global_step, model=detection_model, optimizer=optimizer)
 
