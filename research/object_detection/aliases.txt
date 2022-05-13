@@ -1,0 +1,88 @@
+# BASH aliases 
+
+# General
+alias python='python3'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias sbash='source ~/.bashrc'
+alias vbash='vi ~/.bashrc'
+alias valias='vi ~/.bash_aliases'
+alias update='sudo apt-get update -y && sudo apt-get dist-upgrade -y'
+alias sound='alsamixer'
+alias show-frames='rosrun tf view_frames'
+#Object detection:
+alias gotows='cd /home/object/caterina/models/research/object_detection/object_ws'
+alias ws='/home/object/caterina/tf_OD_API/models/research/object_detection'
+alias compile_od_generic='cd /home/object/caterina/tf_OD_API/models/research && python -m pip install --use-feature=2020-resolver .'
+alias reinstall_od='python -m pip install --use-feature=2020-resolver .'
+# GIT
+alias gits='git status'
+alias git-remove-deleted='git ls-files --deleted -z | xargs -0 git rm'
+#alias commit='commit --author='
+alias git_commit_cat='git commit --author="caterinamusi96@gmail.com"'
+# SSH
+alias sshpul-ext='ssh -XY -p 2200 -t turbot@130.206.30.77'
+alias sshnas='ssh -XY -t admin@192.168.1.50:/data'
+alias sshpul-ros='ssh -XY -p 2200 -t ros@192.168.1.100'
+alias sshpulgarcito='ssh -XY -p 2200 -t turbot@192.168.1.100'
+alias sshpul-eric='ssh -XY -p 2200 -t ericguerrero@192.168.1.100 "byobu -S eric"'
+alias sshpul-eric-ext='ssh -XY -p 2200 -t ericguerrero@130.206.30.77'
+alias sshrom-turbot='ssh -XY turbot@192.168.1.25'
+alias sshrom-eric='ssh -XY -t ericguerrero@192.168.1.25 "byobu -S eric"'
+alias sshrom-eric-ext='ssh -XY -t ericguerrero@192.168.1.25 "byobu -S eric"'
+alias sshgs='ssh -XY -t uib178907@192.168.1.172'
+alias sshsparus-104='ssh -XY -t user@192.168.1.205 "byobu"'
+alias sshsparus-nuc='ssh -XY -t sparus@192.168.1.206 "byobu -S eric"'
+alias sshxiroi='ssh -XY -t xiroi@192.168.1.207 "byobu"'
+alias sshxiroieric='ssh -XY -t catamaran@192.168.1.207 "byobu -S eric"'
+alias sshrasp='ssh -XY pi@192.168.1.95'
+alias sshreach200='ssh -XY root@192.168.1.200 '
+alias sshreach201='ssh -XY root@192.168.1.201 '
+alias sshsparus='ssh -XY -t user@192.168.1.205 "byobu"'
+# ROS
+alias tgrep="tlist | grep"
+alias techo='rostopic echo'
+alias tlist='rostopic list'
+alias tinfo='rostopic info'
+alias image_view='rosrun image_view image_view image:=/stereo_down/left/image_rect_color'
+alias image_view_forward='rosrun image_view image_view image:=/stereo_forward/left/image_rect_color'
+alias rviz='rosrun rviz rviz'
+alias tf='cd /var/tmp && rosrun tf view_frames && evince frames.pdf &'
+alias reconfigure='rosrun rqt_reconfigure rqt_reconfigure'
+alias plot_odometry='roscd stereo_slam && ./scripts/plot_odom.py L /ekf_odom/odometry /ekf_map/odometry /sparus/pat_to_ros_odom'
+alias catkin_ignore_package='echo '"'"'Touching CATKIN_IGNORE'"'"'; echo '"'"'If you want this package to compile again, remove it'"'"'; touch CATKIN_IGNORE'
+alias catkin_list_ignored_packages='roscd; cd ..; find -name '"'"'CATKIN_IGNORE'"'"' -printf '"'"'%h\n'"'"' | sort -u'
+
+#IQUA
+alias iquaview='cd ~/turbot_ws/src/turbot_stack/iquaview && ./run.sh'
+
+alias uri_turbot='export ROS_MASTER_URI=http://192.168.1.205:11311'
+alias uri_xiroi='export ROS_MASTER_URI=http://192.168.1.207:11311'
+alias uri_home='export ROS_MASTER_URI=http://127.0.0.1:11311'
+alias uri_gs='export ROS_MASTER_URI=http://192.168.1.172:11311'
+# OTHER
+alias hosts='sudo vim /etc/hosts'
+alias meshlab='LC_ALL=C meshlab'
+alias ipmap='nmap -sn 192.168.1.0/24'
+alias printer='cd ~/ && ./install_printer_64b.sh'
+alias make='make -j4'
+alias matlab='/usr/local/MATLAB/R2016b/bin/matlab &'
+alias pycharm='cd /opt/pycharm-2017.2.3/bin/ && ./pycharm.sh'
+alias tree3='tree -d -L 3'
+alias grass_notebook='sh $HOME/lib/grass_jupyter.sh'
+alias openproject_start='sudo docker start openproject'
+alias openproject_stop='sudo docker stop openproject'
+alias copy='rsync -avz --append --progress --partial -e' #ssh /origin_dir eric-uib@192.168.1.25:/dest_dir
+alias mountnas='sudo mount -t nfs -r 192.168.1.50:/data ~/nas/'
+
+# Com
+alias rompetechos-wake='sudo etherwake -i enp3s0 4c:cc:6a:6b:83:c0'
+alias pingsparus='ping 192.168.1.205'
+alias pingxiroi='ping 192.168.1.207'
+# sync time with an ntp server. G500 in this case
+#alias sync-machines='sudo ntpdate -bu 192.168.1.51'
+alias sync-sparus='sudo ntpdate -bu 192.168.1.205'
+alias mount-data='sshfs ericguerrero@192.168.1.25:/data ~/data_romp'
+# Examples 
+# scp -P 2200 ericguerrero@130.206.30.77:/data/HD3/bagfiles/turbot/2018_02_15_punta_negra/180215_1610/auv180215_1610_2018-02-15-15-10-04_0.bag /media/eric-uib/HardDisk/
+
