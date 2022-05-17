@@ -7,15 +7,15 @@
 # is an integer that defines how many steps should be completed in a sequence order to make a model checkpoint. Remember, that when a single step is made, your model processes a number of images equal to your batch_size defined for training.
 
 
-PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/test_params/pipeline.config"
+PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/pipeline.config"
 
-MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/test_params/model_outputs_3"
+MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/model_outputs_3"
 
-NUM_TRAIN_STEPS=1600
+NUM_TRAIN_STEPS=5000
 SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 CHECKPOINT_EVERY_N=100  #num steps fets per guardar un checkpoint.Per cada step el model processa batch_size imatges
-NUM_STEPS_PER_ITERATION=200
-CHECKPOINT_MAX_TO_KEEP=3
+NUM_STEPS_PER_ITERATION=100
+CHECKPOINT_MAX_TO_KEEP=100
 
 
 # num_workers-> Amb aquest parametre podem indicar quants dels cores de la CPU (que a Olivia és multicore) volem usar.
