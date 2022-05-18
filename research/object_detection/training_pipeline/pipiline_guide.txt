@@ -21,3 +21,7 @@ Exemple:
 
 6) Modificar el necessari de pipeline.config que hem copiat a /home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test
 
+	params(num_classes,
+
+
+7) 

@@ -38,12 +38,10 @@ from object_detection.utils import ops
 from object_detection.utils import variables_helper
 from object_detection.utils import visualization_utils as vutils
 
-import regex as re
-import glob
-
 
 MODEL_BUILD_UTIL_MAP = model_lib.MODEL_BUILD_UTIL_MAP
-NUM_STEPS_PER_ITERATION = 50
+NUM_STEPS_PER_ITERATION = 100
+LOG_EVERY = 100
 
 
 RESTORE_MAP_ERROR_TEMPLATE = (
@@ -57,7 +55,6 @@ def _compute_losses_and_predictions_dicts(
     model, features, labels, training_step=None,
     add_regularization_loss=True):
   """Computes the losses dict and predictions dict for a model on inputs.
-
   Args:
     model: a DetectionModel (based on Keras).
     features: Dictionary of feature tensors from the input dataset.
@@ -113,12 +110,10 @@ def _compute_losses_and_predictions_dicts(
     training_step: int, the current training step.
     add_regularization_loss: Whether or not to include the model's
       regularization loss in the losses dictionary.
-
   Returns:
     A tuple containing the losses dictionary (with the total loss under
     the key 'Loss/total_loss'), and the predictions dictionary produced by
     `model.predict`.
-
   """
   model_lib.provide_groundtruth(model, labels, training_step=training_step)
   preprocessed_images = features[fields.InputDataFields.image]
@@ -153,7 +148,6 @@ def _compute_losses_and_predictions_dicts(
 
 def _ensure_model_is_built(model, input_dataset, unpad_groundtruth_tensors):
   """Ensures that model variables are all built, by running on a dummy input.
-
   Args:
     model: A DetectionModel to be built.
     input_dataset: The tf.data Dataset the model is being trained on. Needed to
@@ -218,14 +212,11 @@ def eager_train_step(detection_model,
                      clip_gradients_value=None,
                      num_replicas=1.0):
   """Process a single training batch.
-
   This method computes the loss for the model on a single training batch,
   while tracking the gradients with a gradient tape. It then updates the
   model variables with the optimizer, clipping the gradients if
   clip_gradients_value is present.
-
   This method can run eagerly or inside a tf.function.
-
   Args:
     detection_model: A DetectionModel (based on Keras) to train.
     features: Dictionary of feature tensors from the input dataset.
@@ -294,7 +285,6 @@ def eager_train_step(detection_model,
     num_replicas: The number of replicas in the current distribution strategy.
       This is used to scale the total loss so that training in a distribution
       strategy works correctly.
-
   Returns:
     The total loss observed at this training step
   """
@@ -329,15 +319,12 @@ def eager_train_step(detection_model,
 
 def validate_tf_v2_checkpoint_restore_map(checkpoint_restore_map):
   """Ensure that given dict is a valid TF v2 style restore map.
-
   Args:
     checkpoint_restore_map: A nested dict mapping strings to
       tf.keras.Model objects.
-
   Raises:
     ValueError: If they keys in checkpoint_restore_map are not strings or if
       the values are not keras Model objects.
-
   """
 
   for key, value in checkpoint_restore_map.items():
@@ -362,15 +349,11 @@ def load_fine_tune_checkpoint(model, checkpoint_path, checkpoint_type,
                               checkpoint_version, run_model_on_dummy_input,
                               input_dataset, unpad_groundtruth_tensors):
   """Load a fine tuning classification or detection checkpoint.
-
   To make sure the model variables are all built, this method first executes
   the model by computing a dummy loss. (Models might not have built their
   variables before their first execution)
-
   It then loads an object-based classification or detection checkpoint.
-
   This method updates the model in-place and does not return a value.
-
   Args:
     model: A DetectionModel (based on Keras) to load a fine-tuning
       checkpoint for.
@@ -388,7 +371,6 @@ def load_fine_tune_checkpoint(model, checkpoint_path, checkpoint_type,
     input_dataset: The tf.data Dataset the model is being trained on. Needed
       to get the shapes for the dummy loss computation.
     unpad_groundtruth_tensors: A parameter passed to unstack_batch.
-
   Raises:
     IOError: if `checkpoint_path` does not point at a valid object-based
       checkpoint
@@ -412,11 +394,9 @@ def load_fine_tune_checkpoint(model, checkpoint_path, checkpoint_type,
 
 def get_filepath(strategy, filepath):
   """Get appropriate filepath for worker.
-
   Args:
     strategy: A tf.distribute.Strategy object.
     filepath: A path to where the Checkpoint object is stored.
-
   Returns:
     A temporary filepath for non-chief workers to use or the original filepath
     for the chief.
@@ -431,9 +411,7 @@ def get_filepath(strategy, filepath):
 
 def clean_temporary_directories(strategy, filepath):
   """Temporary directory clean up for MultiWorker Mirrored Strategy.
-
   This is needed for all non-chief workers.
-
   Args:
     strategy: A tf.distribute.Strategy object.
     filepath: The filepath for the temporary directory.
@@ -455,6 +433,7 @@ def train_loop(
     record_summaries=True,
     performance_summary_exporter=None,
     num_steps_per_iteration=NUM_STEPS_PER_ITERATION,
+    log_every=LOG_EVERY,
     **kwargs):
 
   print("111111111111111111111111111111111111111111111111111111111111 INSIDE TRAINING LOOP,NUM_STEPS_PER_ITERATION is ",num_steps_per_iteration)
@@ -467,7 +446,6 @@ def train_loop(
 
 
   """Trains a model using eager + functions.
-
   This method:
     1. Processes the pipeline configs
     2. (Optionally) saves the as-run config
@@ -538,7 +516,6 @@ def train_loop(
   print("")
 
 
-
   
   if train_config.gradient_clipping_by_norm > 0:
     clip_gradients_value = train_config.gradient_clipping_by_norm
@@ -560,8 +537,7 @@ def train_loop(
 
   # Write the as-run pipeline config to disk.
   if save_final_config:
-    tf.logging.info('Saving pipeline config file to directory {}'.format(
-        model_dir))
+    tf.logging.info('Saving pipeline config file to directory %s', model_dir)
     pipeline_config_final = create_pipeline_proto_from_configs(configs)
     config_util.save_pipeline_config(pipeline_config_final, model_dir)
 
@@ -723,7 +699,7 @@ def train_loop(
           for key, val in logged_dict.items():
             tf.compat.v2.summary.scalar(key, val, step=global_step)
 
-          if global_step.value() - logged_step >= 100:
+          if global_step.value() - logged_step >= LOG_EVERY:
             logged_dict_np = {name: value.numpy() for name, value in
                               logged_dict.items()}
             tf.logging.info(
@@ -756,11 +732,9 @@ def train_loop(
 
 def prepare_eval_dict(detections, groundtruth, features):
   """Prepares eval dictionary containing detections and groundtruth.
-
   Takes in `detections` from the model, `groundtruth` and `features` returned
   from the eval tf.data.dataset and creates a dictionary of tensors suitable
   for detection eval modules.
-
   Args:
     detections: A dictionary of tensors returned by `model.postprocess`.
     groundtruth: `inputs.eval_input` returns an eval dataset of (features,
@@ -782,7 +756,6 @@ def prepare_eval_dict(detections, groundtruth, features):
         * fields.InputDataFields.original_image_spatial_shape
         * fields.InputDataFields.true_image_shape
         * inputs.HASH_KEY
-
   Returns:
     eval_dict: A dictionary of tensors to pass to eval module.
     class_agnostic: Whether to evaluate detection in class agnostic mode.
@@ -863,11 +836,9 @@ def eager_eval_loop(
     global_step=None,
     ):
   """Evaluate the model eagerly on the evaluation dataset.
-
   This method will compute the evaluation metrics specified in the configs on
   the entire evaluation dataset, then return the metrics. It will also log
   the metrics to TensorBoard.
-
   Args:
     detection_model: A DetectionModel (based on Keras) to evaluate.
     configs: Object detection configs that specify the evaluators that should
@@ -879,7 +850,6 @@ def eager_eval_loop(
       the CPU when using a TPU to execute the model.
     global_step: A variable containing the training step this model was trained
       to. Used for logging purposes.
-
   Returns:
     A dict of evaluation metrics representing the results of this evaluation.
   """
@@ -1060,11 +1030,9 @@ def eval_continuously(
     save_final_config=False,
     **kwargs):
   """Run continuous evaluation of a detection model eagerly.
-
   This method builds the model, and continously restores it from the most
   recent training checkpoint in the checkpoint directory & evaluates it
   on the evaluation data.
-
   Args:
     pipeline_config_path: A path to a pipeline config file.
     config_override: A pipeline_pb2.TrainEvalPipelineConfig text proto to
@@ -1115,8 +1083,7 @@ def eval_continuously(
   configs = merge_external_params_with_configs(
       configs, None, kwargs_dict=kwargs)
   if model_dir and save_final_config:
-    tf.logging.info('Saving pipeline config file to directory {}'.format(
-        model_dir))
+    tf.logging.info('Saving pipeline config file to directory %s', model_dir)
     pipeline_config_final = create_pipeline_proto_from_configs(configs)
     config_util.save_pipeline_config(pipeline_config_final, model_dir)
 
@@ -1128,11 +1095,11 @@ def eval_continuously(
   eval_on_train_input_config.sample_1_of_n_examples = (
       sample_1_of_n_eval_on_train_examples)
   if override_eval_num_epochs and eval_on_train_input_config.num_epochs != 1:
-    tf.logging.warning('Expected number of evaluation epochs is 1, but '
-                       'instead encountered `eval_on_train_input_config'
-                       '.num_epochs` = '
-                       '{}. Overwriting `num_epochs` to 1.'.format(
-                           eval_on_train_input_config.num_epochs))
+    tf.logging.warning(
+        ('Expected number of evaluation epochs is 1, but '
+         'instead encountered `eval_on_train_input_config'
+         '.num_epochs` = %d. Overwriting `num_epochs` to 1.'),
+        eval_on_train_input_config.num_epochs)
     eval_on_train_input_config.num_epochs = 1
 
   if kwargs['use_bfloat16']:

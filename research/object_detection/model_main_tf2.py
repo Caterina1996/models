@@ -76,6 +76,7 @@ flags.DEFINE_integer('num_steps_per_iteration', 100, 'Number of ssteps per itera
 flags.DEFINE_integer('checkpoint_max_to_keep', 100, 'Number of ssteps per iteration') # a tensorboard aixo fixa cada quan hi ha info del train
 
 FLAGS = flags.FLAGS
+LIMIT_GPU=True
 # CHECKPOINT_MAX_TO_KEEP=3
 # NUM_STEPS_PER_ITERATION=FLAGS.num_steps_per_iteration
 
@@ -89,6 +90,14 @@ def main(unused_argv):
   print("MAINNNNNNNNNNNNN NUM STEPS PER ITERATION IS: ",FLAGS.num_steps_per_iteration)
   print("MAINNNNNNNNNNNNN CHECKPOINT_MAX_TO_KEEP: ",FLAGS.checkpoint_max_to_keep)
   print("MAINNNNNNNNNNNNN FLAGS.post_train_evaluation: ", FLAGS.post_train_evaluation)
+
+
+
+  #limit GPU usage
+  if LIMIT_GPU==True:
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
 
   if FLAGS.checkpoint_dir:
       if FLAGS.post_train_evaluation==True:
@@ -137,6 +146,7 @@ def main(unused_argv):
           use_tpu=FLAGS.use_tpu,
           checkpoint_every_n=FLAGS.checkpoint_every_n,
           record_summaries=FLAGS.record_summaries)
+          #add log every!
 
 if __name__ == '__main__':
   tf.compat.v1.app.run()
