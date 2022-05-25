@@ -13,7 +13,7 @@ MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entr
 CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/model_outputs_traineval"
 
 # NUM_TRAIN_STEPS=5000
-POST_TRAIN_EVAL=False
+POST_TRAIN_EVAL=True
 
 cd /home/object/caterina/tf_OD_API/models/research/object_detection/
 
