@@ -5,6 +5,7 @@ https://app.neptune.ai/anton-morgunov/tf-test/n/model-for-inference-36c9b0c4-8d2
 """
 
 
+from importlib.resources import path
 import os # importing OS in order to make GPU visible
 import tensorflow as tf # import tensorflow
 
@@ -12,10 +13,15 @@ import tensorflow as tf # import tensorflow
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
+import shutil 
 from tqdm import tqdm
 import sys # importyng sys in order to access scripts located in a different folder¡
 import glob
-
+import PIL.Image as Image
+import PIL.ImageColor as ImageColor
+import PIL.ImageDraw as ImageDraw
+import PIL.ImageFont as ImageFont
+import imageio
 path2scripts = '/home/object/caterina/tf_OD_API/models/research' # TODO: provide pass to the research folder
 sys.path.insert(0, path2scripts) # making scripts in models/research available for import
 # importing all scripts that will be needed to export your model and use it for inference
@@ -24,7 +30,7 @@ from object_detection.utils import config_util
 from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
 
-
+import scipy
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" # do not change anything in here
 
@@ -51,6 +57,13 @@ PATH_TO_LABELS="/home/object/caterina/tf_OD_API/models/research/object_detection
 path2config ='/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/halimeda_nodataug.config'
 path2model = '/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/halimeda_nodataug/checkpoint/'
 path2label_map = '/home/object/caterina/tf_OD_API/models/research/object_detection/data/halimeda_new_test/label_map.pbtxt' # TODO: provide a path to the label map file
+
+
+if os.path.exists(PATH_TO_OUTPUT_DIR):
+    shutil.rmtree(PATH_TO_OUTPUT_DIR)
+if not os.path.exists(PATH_TO_OUTPUT_DIR):
+    os.mkdir(PATH_TO_OUTPUT_DIR)
+    
 
 # do not change anything in this cell
 configs = config_util.get_configs_from_pipeline_file(path2config) # importing config
@@ -96,7 +109,7 @@ def load_image_into_numpy_array(path):
     return np.array(Image.open(path))
 
 def inference_as_raw_output(path2images,box_th = 0.25,
-                            nms_th = 0.5,
+                            nms_th = 0.9,
                             to_file = False,
                             data = None,
                             path2dir = False):
@@ -118,15 +131,15 @@ def inference_as_raw_output(path2images,box_th = 0.25,
     
     print (f'Current data set is {data}')
     print (f'Ready to start inference on {len(path2images)} images!')
-    
-    for image_path in tqdm(path2images):
+    print("TQDM!!!!!!!!!!!!!!!",tqdm(path2images),"\n")
+    for image_path in path2images:
 
-        print("IMAGE PATH IS:,",image_path,"\n")
-        print("TQDM!!!!!!!!!!!!!!!",tqdm(path2images),"\n")
+        print("IMAGE PATH IS111111111111111111111111:,",image_path,"\n")
+        # print("TQDM!!!!!!!!!!!!!!!",tqdm(path2images),"\n")
         if path2dir: # if a path to a directory where images are stored was passed in
             image_path = os.path.join(path2dir, image_path.strip())
-        
-        print("IMAGE PATH IS:,",image_path)
+            print("this shouldnt be on your screen!!!!")
+        print("IMAGE PATH IS222222222222222222222222222222222222222222:,",image_path)
             
         image_np = load_image_into_numpy_array(image_path)
 
@@ -169,7 +182,7 @@ def inference_as_raw_output(path2images,box_th = 0.25,
             detections['detection_classes'] = classes
             
         if to_file and data: # if saving to txt file was requested
-
+            print("HELLO THEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
             image_h, image_w, _ = image_np.shape
             file_name = f'pred_result_{data}.txt'
             
@@ -191,7 +204,7 @@ def inference_as_raw_output(path2images,box_th = 0.25,
                 line2write = ' '.join(line2write)
                 text_file.write(line2write + os.linesep)
         
-        return detections
+    return detections
 
 def inference_with_plot(path2images, box_th=0.25):
     """
@@ -242,15 +255,18 @@ def inference_with_plot(path2images, box_th=0.25):
 
         img_path=str(PATH_TO_OUTPUT_DIR)+"/"+str(image_path.split("/")[-1])
         
-        fig=plt.figure(figsize=(15,10),frameon=False)
-        ax = plt.Axes(fig, [0., 0., 1., 1.])
-        ax.set_axis_off()
-        fig.add_axes(ax)
+        # fig=plt.figure(figsize=(15,10),frameon=False)
+        # ax = plt.Axes(fig, [0., 0., 1., 1.])
+        # ax.set_axis_off()
+        # fig.add_axes(ax)
 
-        ax.imshow(image_np_with_detections, aspect='auto')
-        plt.imshow(image_np_with_detections)
-        # fig.savefig(img_path, dpi)
-        fig.savefig(img_path, bbox_inches='tight', pad_inches=0)
+        # ax.imshow(image_np_with_detections, aspect='auto')
+        # plt.imshow(image_np_with_detections)
+        # fig.savefig(img_path, bbox_inches='tight', pad_inches=0)
+
+        image_pil = Image.fromarray(image_np_with_detections)
+        # scipy.misc.imsave(img_path, image_pil)
+        imageio.imwrite(img_path, image_pil)
 
         # plt.savefig(img_path )
         print('Image saved in '+img_path)
@@ -317,4 +333,16 @@ def square(rect):
     return abs(rect[2] - rect[0]) * abs(rect[3] - rect[1])
 
 path2images=glob.glob(str(PATH_TO_TEST_IMAGES)+"/**")
+print("Paths to images at 1 are",path2images)
+print("PLOT INFERENCE ON IMAGES:")
 inference_with_plot(path2images, 0.25)
+print("SAVE MODEL INFERENCE")
+
+path2images=glob.glob(str(PATH_TO_TEST_IMAGES)+"/**")
+
+print("Paths to images at 2 are",path2images)
+
+
+predictions=inference_as_raw_output(path2images,box_th = 0.25, nms_th = 0.9, to_file = True, data = "Test",path2dir = False)
+
+print("PREDICTIONS:",predictions)
