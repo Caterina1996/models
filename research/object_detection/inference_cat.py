@@ -27,14 +27,23 @@ from object_detection.utils import config_util
 from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
 
+#EXAMPLE WORKING:
 
-PATH_TO_CKPT="exported_models/faster_rcnn_inception_resnet_v2/v2/exported_model"
+# PATH_TO_CKPT="exported_models/faster_rcnn_inception_resnet_v2/v2/exported_model"
+# PATH_TO_TEST_IMAGES="test_images/halimeda_test"
+# PATH_TO_OUTPUT_DIR="training/faster_rcnn_inception_resnet_v2/v2/results/"
+# PATH_TO_LABELS="/home/object/models/research/object_detection/data/halimeda_test/label_map.pbtxt"
 
-PATH_TO_TEST_IMAGES="test_images/halimeda_test"
 
-PATH_TO_OUTPUT_DIR="training/faster_rcnn_inception_resnet_v2/v2/results/"
 
-PATH_TO_LABELS="/home/object/models/research/object_detection/data/halimeda_test/label_map.pbtxt"
+PATH_TO_CKPT="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/halimeda_nodataug"
+
+PATH_TO_TEST_IMAGES="/home/object/caterina/tf_OD_API/models/research/object_detection/test_images/halimeda_new_test"
+
+PATH_TO_OUTPUT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/test_nodataug/results"
+
+# OUTPUT_DIRECTORY_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/results/new_halimeda_test"
+PATH_TO_LABELS="/home/object/caterina/tf_OD_API/models/research/object_detection/data/halimeda_new_test/label_map.pbtxt"
 
 def load_image_into_numpy_array(path):
     """Load an image from file into a numpy array.
@@ -95,9 +104,15 @@ def plot_inference(image_path,image):
           min_score_thresh=.30,
           agnostic_mode=False)
 
-    plt.figure()
+    fig=plt.figure(frameon=False)    
+    ax = plt.Axes(fig, [0., 0., 1., 1.])
+    ax.set_axis_off()
+    fig.add_axes(ax)
+
+    ax.imshow(image_np_with_detections, aspect='auto')
     plt.imshow(image_np_with_detections)
-    plt.savefig(PATH_TO_OUTPUT_DIR+image)
+    # plt.savefig(PATH_TO_OUTPUT_DIR+image,bbox_inches='tight', pad_inches=0)
+    fig.savefig(PATH_TO_OUTPUT_DIR+image, bbox_inches='tight', pad_inches=0)
     print('Image saved in '+PATH_TO_OUTPUT_DIR+image)
     plt.show()
 
