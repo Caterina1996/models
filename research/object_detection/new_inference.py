@@ -5,10 +5,8 @@ Script created following Tensorflow Object Detection API:
 https://github.com/Caterina1996/models/blob/master/research/object_detection/colab_tutorials/inference_tf2_colab.ipynb
 
 
-
 Check this other options too:
 https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/auto_examples/plot_object_detection_checkpoint.html
-
 
 
 https://github.com/tensorflow/models/blob/master/research/object_detection/colab_tutorials/inference_tf2_colab.ipynb
@@ -31,9 +29,10 @@ import matplotlib
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 
-import tensorflow as tf
+# import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from object_detection.utils import visualization_utils as viz_utils
-
+from object_detection.utils import dataset_util, label_map_util
 # matplotlib inline
 
 
@@ -48,7 +47,7 @@ flags.DEFINE_string('labels_file', '', 'path to the class label file')
 
 FLAGS = flags.FLAGS
 PATH_TO_LABELS = FLAGS.labels_file
-PATH_TO_CKPT = FLAGS.MODEL_NAME 
+PATH_TO_CKPT = FLAGS.model_checkpoint_dir 
 
 PATH_TO_TEST_IMAGES = FLAGS.test_dir
 PATH_TO_OUTPUT_DIR = FLAGS.out_dir
