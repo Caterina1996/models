@@ -105,9 +105,8 @@ def load_image_into_numpy_array(path):
     return np.array(Image.open(path))
 
 def inference_as_raw_output(image_path,box_th = 0.25,
-                            nms_th = 0.9,
+                            nms_th = 0.5,
                             to_file = False,
-                            data = None,
                             path2dir = False):
     """
     Function that performs inference and return filtered predictions
@@ -118,7 +117,6 @@ def inference_as_raw_output(image_path,box_th = 0.25,
         nms_th: (float) value that defines threshold for non-maximum suppression. Consider 0.5 as a value.
         to_file: (boolean). When passed as True => results are saved into a file. Writing format is
         path2image + (x1abs, y1abs, x2abs, y2abs, score, conf) for box in boxes
-        data: (str) name of the dataset you passed in (e.g. test/validation)
         path2dir: (str). Should be passed if path2images has only basenames. If full pathes provided => set False.
         
     Returs:
@@ -160,15 +158,14 @@ def inference_as_raw_output(image_path,box_th = 0.25,
                                 detections['detection_classes']
                                 )
                             )
-        boxes, scores, classes = nms(output_info)
+        boxes, scores, classes = nms(output_info, nms_th)
         
         detections['detection_boxes'] = boxes # format: [y1, x1, y2, x2]
         detections['detection_scores'] = scores
         detections['detection_classes'] = classes
 
         
-    if to_file and data: # if saving to txt file was requested
-        print("HELLO THEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+    if to_file: # if saving to txt file was requested
         image_h, image_w, _ = image_np.shape
         file_name = f'pred_result_{img_id}.txt'
         file_name=str(PATH_TO_OUTPUT_DIR)+"/"+file_name
@@ -264,7 +261,7 @@ def main():
             print(file_list)
             file_name=os.path.join(PATH_TO_TEST_IMAGES,file_list[0])
             print(file_name)
-            predictions=inference_as_raw_output(file_name,box_th = 0.0, nms_th = 1, to_file = True, data = "Test4",path2dir = False)
+            predictions=inference_as_raw_output(file_name,box_th = 0.7, nms_th = 0.5, to_file = True, path2dir = False)
             os.remove(file_name)
 
 
