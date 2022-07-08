@@ -1,1 +1,0 @@
-copiadesles millors halimeda algo

@@ -130,7 +130,6 @@ class Object_detection:
 			return
 		self.new_data = False
 
-		# Retrieve image
 		try:
 			image = self.image
 			header = self.image.header
