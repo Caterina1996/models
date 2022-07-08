@@ -99,3 +99,6 @@ ENV/
 
 #outputs from training
 ckpt-**.data**
+
+**/exported_models/**
+**/test_images/*

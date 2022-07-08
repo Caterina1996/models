@@ -11,6 +11,7 @@ import tensorflow as tf # import tensorflow
 
 # other import
 import numpy as np
+import time
 from PIL import Image
 from matplotlib import pyplot as plt
 import shutil 
@@ -21,15 +22,13 @@ import PIL.Image as Image
 import PIL.ImageColor as ImageColor
 import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
-import imageio
-path2scripts = '/home/object/caterina/tf_OD_API/models/research' # TODO: provide pass to the research folder
+path2scripts = '/home/sparus/object_detection/models/research' # TODO: provide pass to the research folder
 sys.path.insert(0, path2scripts) # making scripts in models/research available for import
 # importing all scripts that will be needed to export your model and use it for inference
 from object_detection.utils import config_util
 from object_detection.builders import model_builder
 
 import scipy
-from natsort import natsorted
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" # do not change anything in here
 
@@ -45,16 +44,15 @@ else:
 
 
 #PATHS CATERINA
-PATH_TO_TEST_IMAGES="/home/object/caterina/tf_OD_API/models/research/object_detection/test_images/mines_online"
-PATH_TO_OUTPUT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/results_online"
-PATH_TO_LABELS="/home/object/caterina/tf_OD_API/models/research/object_detection/data/no_mines/label_map.pbtx"
+PATH_TO_TEST_IMAGES="/home/sparus/object_detection/models/research/object_detection/test_images/no_mines_online"
+PATH_TO_OUTPUT_DIR="/home/sparus/object_detection/models/research/object_detection/results/no_mines_1000_online"
+PATH_TO_LABELS="/home/sparus/object_detection/models/research/object_detection/exported_models/no_mines_1000/label_map.pbtx"
 
 
 # NOTE: your current working directory should be Tensorflow.
 # TODO: specify two pathes: to the pipeline.config file and to the folder with trained model.
-path2config ='/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/pipeline.config'
-path2model = '/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/no_mines/no_mines_1000/checkpoint/'
-path2model2 = '/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/no_mines/no_mines_1000/saved_model'
+path2config ='/home/sparus/object_detection/models/research/object_detection/exported_models/no_mines_1000/pipeline.config'
+path2model = '/home/sparus/object_detection/models/research/object_detection/exported_models/no_mines_1000/checkpoint/'
 
 path2label_map = PATH_TO_LABELS # TODO: provide a path to the label map file
 
@@ -255,13 +253,15 @@ def square(rect):
 def main():
     while(True):
         file_list=os.listdir(PATH_TO_TEST_IMAGES)
-        file_list=natsorted(file_list)
-        
+
         if len(file_list) > 0:
-            print(file_list)
             file_name=os.path.join(PATH_TO_TEST_IMAGES,file_list[0])
-            print(file_name)
+            print("file: " + file_list[0])
+            t0 = time.time()
             predictions=inference_as_raw_output(file_name,box_th = 0.7, nms_th = 0.5, to_file = True, path2dir = False)
+            t1 = time.time()
+            t_pred = t1-t0
+            print("predition took: " + str(t_pred) + "seconds")
             os.remove(file_name)
 
 
