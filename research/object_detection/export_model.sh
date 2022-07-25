@@ -30,12 +30,11 @@
 #     --side_input_types type_1,type_2
 
 
+MODEL_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/post_cartagena/FASTER-CNN/pipeline.config"
 
-MODEL_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/pipeline.config"
+TRAINDED_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/post_cartagena/FASTER-CNN/to_freeze"
 
-TRAINDED_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/model_outputs"
-
-OUTPUT_DIRECTORY_PATH="/home/object/models/research/object_detection/exported_models/faster_rcnn_inception_resnet_v2/"
+OUTPUT_DIRECTORY_PATH="/home/object/models/research/object_detection/exported_models/post_cartagema/FASTR-CNN/no_dataug/"
 
 python3 exporter_main_v2.py \
   --model_checkpoint_dir=$MODEL_CHECKPOINT_DIR \

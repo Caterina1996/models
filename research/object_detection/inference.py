@@ -45,25 +45,23 @@ else:
     print("No GPU found")
 
 
-#PATHS CATERINA
-PATH_TO_CKPT="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/halimeda_nodataug"
-PATH_TO_TEST_IMAGES="/home/object/caterina/tf_OD_API/models/research/object_detection/test_images/halimeda_new_test"
-PATH_TO_OUTPUT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/test_nodataug/results"
-PATH_TO_LABELS="/home/object/caterina/tf_OD_API/models/research/object_detection/data/halimeda_new_test/label_map.pbtxt"
+common = "/home/object/caterina/tf_OD_API/models/research/object_detection/"
 
+# PATH_TO_TEST_IMAGES= common + "test_images/peixos_full"
+PATH_TO_TEST_IMAGES= common + "test_images/peixos_full"
 
-# NOTE: your current working directory should be Tensorflow.
-# TODO: specify two pathes: to the pipeline.config file and to the folder with trained model.
-path2config ='/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/halimeda_nodataug.config'
-path2model = '/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/halimeda_nodataug/checkpoint/'
-path2label_map = '/home/object/caterina/tf_OD_API/models/research/object_detection/data/halimeda_new_test/label_map.pbtxt' # TODO: provide a path to the label map file
+PATH_TO_OUTPUT_DIR= common + "results/mines/" + "FASTR-CNN/" + "dataug/more_peixos/frozen_5_4k/"
 
+PATH_TO_LABELS= common + "data/no_mines/label_map.pbtx"
+
+common2 = "exported_models/mines/FASTR-CNN/dataug/more_peixos/frozen_5_4k/"
+path2config = common + common2 + 'pipeline.config'
+path2model =  common + common2 + 'checkpoint/'
 
 if os.path.exists(PATH_TO_OUTPUT_DIR):
     shutil.rmtree(PATH_TO_OUTPUT_DIR)
 if not os.path.exists(PATH_TO_OUTPUT_DIR):
     os.mkdir(PATH_TO_OUTPUT_DIR)
-    
 
 # do not change anything in this cell
 configs = config_util.get_configs_from_pipeline_file(path2config) # importing config
@@ -73,7 +71,7 @@ detection_model = model_builder.build(model_config=model_config, is_training=Fal
 ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
 ckpt.restore(os.path.join(path2model, 'ckpt-0')).expect_partial()
 
-category_index = label_map_util.create_category_index_from_labelmap(path2label_map,use_display_name=True)
+category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS,use_display_name=True)
 
 def detect_fn(image):
     """
@@ -131,15 +129,13 @@ def inference_as_raw_output(path2images,box_th = 0.25,
     
     print (f'Current data set is {data}')
     print (f'Ready to start inference on {len(path2images)} images!')
-    print("TQDM!!!!!!!!!!!!!!!",tqdm(path2images),"\n")
     for image_path in path2images:
 
-        print("IMAGE PATH IS111111111111111111111111:,",image_path,"\n")
+        print("IMAGE PATH IS:,",image_path,"\n")
         # print("TQDM!!!!!!!!!!!!!!!",tqdm(path2images),"\n")
         if path2dir: # if a path to a directory where images are stored was passed in
             image_path = os.path.join(path2dir, image_path.strip())
             print("this shouldnt be on your screen!!!!")
-        print("IMAGE PATH IS222222222222222222222222222222222222222222:,",image_path)
             
         image_np = load_image_into_numpy_array(image_path)
 
@@ -182,10 +178,103 @@ def inference_as_raw_output(path2images,box_th = 0.25,
             detections['detection_classes'] = classes
             
         if to_file and data: # if saving to txt file was requested
-            print("HELLO THEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
             image_h, image_w, _ = image_np.shape
             file_name = f'pred_result_{data}.txt'
+            file_name=str(PATH_TO_OUTPUT_DIR)+"/"+file_name
+            line2write = list()
+            line2write.append(os.path.basename(image_path))
             
+            with open(file_name, 'a+') as text_file:
+                # iterating over boxes
+                for b, s, c in zip(boxes, scores, classes):
+                    
+                    y1abs, x1abs = b[0] * image_h, b[1] * image_w
+                    y2abs, x2abs = b[2] * image_h, b[3] * image_w
+                    
+                    list2append = [x1abs, y1abs, x2abs, y2abs, s, c]
+                    line2append = ','.join([str(item) for item in list2append])
+                    
+                    line2write.append(line2append)
+                
+                line2write = ' '.join(line2write)
+                text_file.write(line2write + os.linesep)
+    return detections
+
+
+def inference_to_folder(path2images,box_th = 0.25,
+                            nms_th = 0.9,
+                            to_file = True,
+                            data = None,
+                            path2dir = False):
+    """
+    Function that performs inference and return filtered predictions
+
+    Args:
+        path2images: an array with pathes to images
+        box_th: (float) value that defines threshold for model prediction. Consider 0.25 as a value.
+        nms_th: (float) value that defines threshold for non-maximum suppression. Consider 0.5 as a value.
+        to_file: (boolean). When passed as True => results are saved into a file. Writing format is
+        path2image + (x1abs, y1abs, x2abs, y2abs, score, conf) for box in boxes
+        data: (str) name of the dataset you passed in (e.g. test/validation)
+        path2dir: (str). Should be passed if path2images has only basenames. If full pathes provided => set False.
+        
+    Returs:
+        detections (dict): filtered predictions that model made
+    """
+    
+    print (f'Current data set is {data}')
+    print (f'Ready to start inference on {len(path2images)} images!')
+    for image_path in path2images:
+
+        print("IMAGE PATH IS:,",image_path,"\n")
+        if path2dir: # if a path to a directory where images are stored was passed in
+            image_path = os.path.join(path2dir, image_path.strip())
+            print("this shouldnt be on your screen!!!!")
+            
+        image_np = load_image_into_numpy_array(image_path)
+
+        input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
+        detections = detect_fn(input_tensor)
+        
+        # checking how many detections we got
+        num_detections = int(detections.pop('num_detections'))
+        
+        # filtering out detection in order to get only the one that are indeed detections
+        detections = {key: value[0, :num_detections].numpy() for key, value in detections.items()}
+        
+        # detection_classes should be ints.
+        detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
+        
+        # defining what we need from the resulting detection dict that we got from model output
+        key_of_interest = ['detection_classes', 'detection_boxes', 'detection_scores']
+        
+        # filtering out detection dict in order to get only boxes, classes and scores
+        detections = {key: value for key, value in detections.items() if key in key_of_interest}
+        
+        if box_th: # filtering detection if a confidence threshold for boxes was given as a parameter
+            for key in key_of_interest:
+                scores = detections['detection_scores']
+                current_array = detections[key]
+                filtered_current_array = current_array[scores > box_th]
+                detections[key] = filtered_current_array
+        
+        if nms_th: # filtering rectangles if nms threshold was passed in as a parameter
+            # creating a zip object that will contain model output info as
+            output_info = list(zip(detections['detection_boxes'],
+                                   detections['detection_scores'],
+                                   detections['detection_classes']
+                                  )
+                              )
+            boxes, scores, classes = nms(output_info)
+            
+            detections['detection_boxes'] = boxes # format: [y1, x1, y2, x2]
+            detections['detection_scores'] = scores
+            detections['detection_classes'] = classes
+            
+        if to_file and data: # if saving to txt file was requested
+            image_h, image_w, _ = image_np.shape
+            file_name = f'pred_result_{data}.txt'
+            file_name=str(PATH_TO_OUTPUT_DIR)+"/"+file_name
             line2write = list()
             line2write.append(os.path.basename(image_path))
             
@@ -206,6 +295,7 @@ def inference_as_raw_output(path2images,box_th = 0.25,
         
     return detections
 
+
 def inference_with_plot(path2images, box_th=0.25):
     """
     Function that performs inference and plots resulting b-boxes
@@ -220,7 +310,6 @@ def inference_with_plot(path2images, box_th=0.25):
     for image_path in path2images:
 
         print('Running inference for {}... '.format(image_path), end='')
-        print("IMAGE PATH IS:",image_path)
         image_np = load_image_into_numpy_array(image_path)
         
         input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
@@ -343,6 +432,6 @@ path2images=glob.glob(str(PATH_TO_TEST_IMAGES)+"/**")
 print("Paths to images at 2 are",path2images)
 
 
-predictions=inference_as_raw_output(path2images,box_th = 0.25, nms_th = 0.9, to_file = True, data = "Test",path2dir = False)
+predictions=inference_as_raw_output(path2images,box_th = 0.0, nms_th = 1, to_file = True, data = "Test4",path2dir = False)
 
 print("PREDICTIONS:",predictions)

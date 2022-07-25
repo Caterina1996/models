@@ -30,15 +30,20 @@
 #     --side_input_types type_1,type_2
 
 
+# MODEL_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/pipeline.config"
+# TRAINDED_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/model_outputs"
+# OUTPUT_DIRECTORY_PATH="/home/object/models/research/object_detection/exported_models/faster_rcnn_inception_resnet_v2/"
 
-MODEL_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/pipeline.config"
+PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/FASTR-CNN/dataug/more_peixos/pipeline.config"
 
-TRAINDED_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/model_outputs"
+TRAINDED_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/FASTR-CNN/dataug/more_peixos/to_freeze"
 
-OUTPUT_DIRECTORY_PATH="/home/object/models/research/object_detection/exported_models/faster_rcnn_inception_resnet_v2/"
+OUTPUT_DIRECTORY_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/mines/FASTR-CNN/dataug/more_peixos/frozen_10k/"
+
+cd /home/object/caterina/tf_OD_API/models/research/object_detection/
 
 python3 exporter_main_v2.py \
-  --model_checkpoint_dir=$MODEL_CHECKPOINT_DIR \
+  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
   --trained_checkpoint_dir=$TRAINDED_CHECKPOINT_DIR \
   --output_directory=$OUTPUT_DIRECTORY_PATH \
   --input_type=image_tensor
