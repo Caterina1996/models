@@ -1,0 +1,28 @@
+
+
+
+Exemple pipeline d'execucio HALIMEDA
+
+
+1-Etiquetar i ordenar
+
+2- Fer un nou split del dataset:
+
+cd /home/object/image_utils/scripts
+
+python partition_dataset.py --input_dir /home/object/Desktop/data/halimeda/labelled/INVHALI/data/train_test_1/all --output_dir /home/object/Desktop/da│ta/halimeda/labelled/INVHALI/data/train_test_1         
+
+#El label map l'he copiat de la prova anterior (és sempre lo mateix dict de classes de halimeda)
+
+4- Generar els tfrecord 
+Anar a image_utils:
+
+python tfrecord_from_xml.py -i /home/object/caterina/tf_OD_API/models/research/object_detection/data/halimeda/halimeda_new_data
+
+5- Entreno i eval
+
+sh train.sh
+sh eval.sh
+
+6- Exportar model
+

@@ -1,0 +1,104 @@
+Exemple peixos:
+
+1) Etiquetar amb labelImg
+
+python labelimg (al pc local labelimg)
+
+*Les etiquetes que ens van passar tenien mal posat el format de les imatges (png i eren jpg)
+
+2)Convertir les etiquetes:
+    -Dividir el dataset en train i test:
+    python partition_dataset.py --input_dir /home/uib/Documentos/cat/PLOME/IMEDEA_PEIXOS/images --output_dir=/home/uib/Documentos/cat/PLOME/IMEDEA_PEIXOS
+
+    -Com que amb els peixos no tenim les etiquetes llistades cercam totes les etiquetes dels xml i cream el label_map.pbtx:
+    $ cd image_utils/scripts
+    $ python find_all_labels.py --dir /home/uib/Documentos/cat/PLOME/IMEDEA_PEIXOS/images/original_images --out_dir=/home/uib/Documentos/cat/PLOME/IMEDEA_PEIXOS/images/original_images
+    Obtenim el fitxer del label_map.pbtx que després necessitarem i el diccionari per ordre de mostres:
+    
+    ('sorted1':, 
+    [('Afish poly', 478), 
+    ('Chromis chromis', 464), 
+    ('Diplodus annularis', 373), 
+    ('Coris julis', 142), 
+    ('Mugilidae prob Chelon', 130), 
+    ('Serranus scriba', 107), 
+    ('Oblada melanura', 101), 
+    ('Diplodus vulgaris', 50), 
+    ('Diplodus sp.', 46), 
+    ('Diplodus sargus', 41), 
+    ('Pomatous salator', 39), 
+    ('Symphodus sp.', 26), 
+    ('Mullus sp.', 9), 
+    ('Epinephelus marginatus', 2), 
+    ('serranid unid.', 2), 
+    ('Epinephelus sp.', 1), 
+    ('labrid unid.', 1)])
+
+    -Convertir les etiquetes de xml a tfrecord:
+    python generate_tf_record.py -i /home/object/caterina/tf_OD_API/models/research/object_detection/data/peixos_imedea
+
+    #menys especies:
+    python generate_tf_record.py 
+    -i /home/object/caterina/tf_OD_API/models/research/object_detection/data/peixos_imedea 
+    -o /home/object/caterina/tf_OD_API/models/research/object_detection/data/peixos_imedea/prova_menys_especies 
+    -l /home/object/caterina/tf_OD_API/models/research/object_detection/data/peixos_imedea/prova_menys_especies
+    -c True
+
+
+    *Prova 1: Només les especies que tenen + de 50 mostres
+    item {
+    id: 1
+    name: 'Diplodus vulgaris'
+    }
+    item {
+    id: 2
+    name: 'Chromis chromis'
+    }
+    item {
+    id: 3
+    name: 'Diplodus annularis'
+    }
+    item {
+    id: 4
+    name: 'Coris julis'
+    }
+    item {
+    id: 5
+    name: 'Mugilidae prob Chelon'
+    }
+    item {
+    id: 6
+    name: 'Serranus scriba'
+    }
+    item {
+    id: 7
+    name: 'Oblada melanura'
+    }
+
+3) Entrenament + eval
+    -Modificar paràmetres entrenament i el pipeline config
+
+    terminal 1 -> sh train.sh
+    terminal 2 -> sh eval.sh
+
+    ** Si el batch és més gran de 1 hi ha errors ?????????????
+
+4) Exportar el model:
+
+#Exemple amb les mines:
+ cd training_pipeline
+
+ sh export_model.sh
+
+ 5) Inferencia
+
+ *Modificar paths dins python
+
+ ws
+python iference.py
+
+
+#OLD CALLS for last part:
+python3 export_inference_graph.py --input_type image_tensor --pipeline_config_path=entrenos/mines/test3/pipeline.config \
+ --trained_checkpoint_prefix entrenos/mines/test3/model_outputs/model.ckpt-81 \
+ --output_directory entrenos/mines/frozen

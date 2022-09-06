@@ -1,0 +1,39 @@
+Procediment post cartagena:
+
+1- Etiquetar imgs noves mines (piscina circesu + base cartagena)
+2- Afegir a la selecció prèvia "no_mines"
+
+3- Fer un nou split del dataset:
+
+cd /home/object/image_utils/scripts
+
+python partition_dataset.py --input_dir /home/object/Desktop/data/mines/no_mines --output_dir /home/object/Desktop/data/mines/gt_split_no_mines_circesu
+
+# split per defecte 20% imatges de test -> Alerta amb les de la piscina i la base que entre sí són casi iguals?
+
+#El label map l'he copiat de la prova anterior (és sempre lo mateix dict de classes de mines)
+
+4- Generar els tfrecord 
+Anar a image_utils:
+
+python tfrecord_from_xml.py -i /home/object/Desktop/data/mines/gt_no_mines_circesu
+
+5- Entrenaments:
+    1) FASTER_RCNN sense dataugmentation resize 800 x 600 
+    2) FASTER_RCNN amb dataugmentation resize 800 x 600
+    3) Centernet sense dataugmentation 
+    4) Centernet amb dataugmentation -> Resize original -> canviant les dimensions del resize no funciona ????
+
+6) Exportar model:
+
+Copiar checkpoint a una carpeta temporal "to_freeze" (checkpoint + ckpt_X, ckpt_X index)
+Canviar el nom de checkpoint_X i ckpt_X_index al del darrer checkpoint-> ckpt_51...
+
+sh export_model.sh
+
+7) Inferència:
+
+-modificar paths dins inferència.py
+- python inference.py
+
+
