@@ -48,13 +48,16 @@ else:
 common = "/home/object/caterina/tf_OD_API/models/research/object_detection/"
 
 # PATH_TO_TEST_IMAGES= common + "test_images/peixos_full"
-PATH_TO_TEST_IMAGES= common + "test_images/peixos_full"
+PATH_TO_TEST_IMAGES= common + "test_images/halimeda"
 
-PATH_TO_OUTPUT_DIR= common + "results/mines/" + "FASTR-CNN/" + "dataug/more_peixos/frozen_5_4k/"
+# PATH_TO_OUTPUT_DIR= common + "results/mines/" + "FASTR-CNN/" + "dataug/mines_frames_bckgrnd/frozen_20k/"
+PATH_TO_OUTPUT_DIR= common + "results/halimeda/test1/frozen_20k/segmentables/" 
 
-PATH_TO_LABELS= common + "data/no_mines/label_map.pbtx"
+PATH_TO_LABELS= common + "data/halimeda/halimeda_new_data/label_map.pbtxt"
 
-common2 = "exported_models/mines/FASTR-CNN/dataug/more_peixos/frozen_5_4k/"
+
+# common2 = "exported_models/mines/FASTR-CNN/dataug/mines_frames_bckgrnd/frozen_20k/"
+common2 = "exported_models/halimeda/test1/frozen_20k/"
 path2config = common + common2 + 'pipeline.config'
 path2model =  common + common2 + 'checkpoint/'
 
@@ -62,6 +65,7 @@ if os.path.exists(PATH_TO_OUTPUT_DIR):
     shutil.rmtree(PATH_TO_OUTPUT_DIR)
 if not os.path.exists(PATH_TO_OUTPUT_DIR):
     os.mkdir(PATH_TO_OUTPUT_DIR)
+    print("hello!")
 
 # do not change anything in this cell
 configs = config_util.get_configs_from_pipeline_file(path2config) # importing config
