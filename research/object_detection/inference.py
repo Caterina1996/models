@@ -48,18 +48,19 @@ else:
 common = "/home/object/caterina/tf_OD_API/models/research/object_detection/"
 
 # PATH_TO_TEST_IMAGES= common + "test_images/peixos_full"
-PATH_TO_TEST_IMAGES= common + "test_images/halimeda"
+PATH_TO_TEST_IMAGES= common + "test_images/halimeda/object2"
 
 # PATH_TO_OUTPUT_DIR= common + "results/mines/" + "FASTR-CNN/" + "dataug/mines_frames_bckgrnd/frozen_20k/"
-PATH_TO_OUTPUT_DIR= common + "results/halimeda/test1/frozen_20k/segmentables/" 
+PATH_TO_OUTPUT_DIR= common + "results/halimeda/test2/frozen_4_6k/object_test" 
 
 PATH_TO_LABELS= common + "data/halimeda/halimeda_new_data/label_map.pbtxt"
 
-
+#EXPORTED MODEL PATH
 # common2 = "exported_models/mines/FASTR-CNN/dataug/mines_frames_bckgrnd/frozen_20k/"
-common2 = "exported_models/halimeda/test1/frozen_20k/"
+common2 = "exported_models/halimeda/test2/frozen_4_6k/"
 path2config = common + common2 + 'pipeline.config'
 path2model =  common + common2 + 'checkpoint/'
+
 
 if os.path.exists(PATH_TO_OUTPUT_DIR):
     shutil.rmtree(PATH_TO_OUTPUT_DIR)
@@ -205,7 +206,7 @@ def inference_as_raw_output(path2images,box_th = 0.25,
     return detections
 
 
-def inference_to_folder(path2images,box_th = 0.25,
+def inference_to_folder(path2images,box_th = 0.10,
                             nms_th = 0.9,
                             to_file = True,
                             data = None,
@@ -327,7 +328,6 @@ def inference_with_plot(path2images, box_th=0.25):
                       for key, value in detections.items()}
         
         detections['num_detections'] = num_detections
-
         # detection_classes should be ints.
         detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
 
@@ -341,7 +341,7 @@ def inference_with_plot(path2images, box_th=0.25):
                 detections['detection_scores'],
                 category_index,
                 use_normalized_coordinates=True,
-                max_boxes_to_draw=200,
+                max_boxes_to_draw=1000,
                 min_score_thresh=box_th,
                 agnostic_mode=False,
                 line_thickness=5)
@@ -365,6 +365,8 @@ def inference_with_plot(path2images, box_th=0.25):
         print('Image saved in '+img_path)
         print('Done')
     plt.show()
+
+    
 
 def nms(rects, thd=0.5):
     """
