@@ -1016,7 +1016,7 @@ def eager_eval_loop(
       loss_metrics[loss_key].append(loss_tensor)
 
   eval_metrics = {}
-
+  print("EVALUATORS!!!!!!!!!!!!!!! :",evaluator)
   for evaluator in evaluators:
     eval_metrics.update(evaluator.evaluate())
   for loss_key in loss_metrics:

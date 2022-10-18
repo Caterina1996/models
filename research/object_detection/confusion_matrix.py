@@ -6,37 +6,31 @@ https://app.neptune.ai/anton-morgunov/tf-test/n/model-for-inference-36c9b0c4-8d2
 
 
 from importlib.resources import path
-import os # importing OS in order to make GPU visible
 import tensorflow as tf # import tensorflow
 
 # other import
 import numpy as np
-from PIL import Image
-from matplotlib import pyplot as plt
 import shutil 
-from tqdm import tqdm
+
 import sys # importyng sys in order to access scripts located in a different folder¡
 import glob
 import PIL.Image as Image
-import PIL.ImageColor as ImageColor
-import PIL.ImageDraw as ImageDraw
-import PIL.ImageFont as ImageFont
-
 import os
 import glob
 import pandas as pd
 import xml.etree.ElementTree as ET
-import argparse
-import imageio
+
+
 path2scripts = '/home/object/caterina/tf_OD_API/models/research' # TODO: provide pass to the research folder
 sys.path.insert(0, path2scripts) # making scripts in models/research available for import
+
 # importing all scripts that will be needed to export your model and use it for inference
 from object_detection.utils import label_map_util
 from object_detection.utils import config_util
 from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
 
-import scipy
+import imageio
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" # do not change anything in here
 
@@ -51,27 +45,31 @@ else:
     print("No GPU found")
 
 
+
 common = "/home/object/caterina/tf_OD_API/models/research/object_detection/"
 
-# PATH_TO_TEST_IMAGES= common + "test_images/peixos_full"
-PATH_TO_TEST_IMAGES= common + "test_images/halimeda/object2"
+# PATH_TO_TEST_IMAGES= common + "test_images/halimeda/object3"
+PATH_TO_TEST_IMAGES= common + "data/halimeda/halimeda_new_data/train_test_3/train/"
+
 
 # PATH_TO_OUTPUT_DIR= common + "results/mines/" + "FASTR-CNN/" + "dataug/mines_frames_bckgrnd/frozen_20k/"
-PATH_TO_OUTPUT_DIR= common + "results/halimeda/test2/frozen_4_6k/object" 
+
+PATH_TO_OUTPUT_DIR= common + "results/halimeda/FASTER-RCNN/test3/frozen_20k/csvs/train/" 
 
 PATH_TO_LABELS= common + "data/halimeda/halimeda_new_data/label_map.pbtxt"
 
 #EXPORTED MODEL PATH
 # common2 = "exported_models/mines/FASTR-CNN/dataug/mines_frames_bckgrnd/frozen_20k/"
-common2 = "exported_models/halimeda/test2/frozen_4_6k/"
+# common2 = "exported_models/halimeda/SSD_RESNET50v1_1024/test1/frozen_20k/"
+common2 = "exported_models/halimeda/FASTER-RCNN/test3/frozen_20k/"
 path2config = common + common2 + 'pipeline.config'
 path2model =  common + common2 + 'checkpoint/'
 
 
 
+# if os.path.exists(PATH_TO_OUTPUT_DIR):
+#     shutil.rmtree(PATH_TO_OUTPUT_DIR)
 
-if os.path.exists(PATH_TO_OUTPUT_DIR):
-    shutil.rmtree(PATH_TO_OUTPUT_DIR)
 if not os.path.exists(PATH_TO_OUTPUT_DIR):
     os.mkdir(PATH_TO_OUTPUT_DIR)
     print("hello!")
@@ -85,6 +83,14 @@ ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
 ckpt.restore(os.path.join(path2model, 'ckpt-0')).expect_partial()
 
 category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS,use_display_name=True)
+
+label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+label_map_dict = label_map_util.get_label_map_dict(label_map)
+
+print("labelmap: ",label_map_dict)
+
+
+print("labelmap: ",label_map_dict)
 
 def detect_fn(image):
     """
@@ -180,12 +186,133 @@ def square(rect):
     return abs(rect[2] - rect[0]) * abs(rect[3] - rect[1])
 
 
+def plot_bbox_from_csv(path_to_csv, box_th=0.1,plot_gt=False,path_to_gt_csv=None):
+    """
+    Function reads a df with files and predictions or gts and infers 
+    
+    Args:
+      path_to_csv: path to csv file containing predictions or gts
+      Row names are supossed to be [filename	width	height	class	xmin	ymin	xmax	ymax	score]
+      output_path: path where images with bbox will be stored
+      box_th: (float) value that defines threshold for model prediction.
+      is_gt: must be True for groundtruth, False for predictions
+      
+    Returns:
+      None
+    """
 
-def print_detections(path2images,box_th = 0.10,
-                            nms_th = 0.9,
-                            to_file = True,
-                            data = None,
-                            path2dir = False):
+    df = pd.read_csv(path_to_csv)
+    print(df.head())
+
+    image_ids=df["filename"]
+    len_df=len(image_ids)
+    print("len DATASET",len_df)
+    print("repeated ids:",image_ids)
+    image_ids=list(set(image_ids))
+    print("suposadament aquest es un set",image_ids)
+
+    boxes_coordinate_keys=["ymin", "xmin", "ymax", "xmax"]
+    print("COORDINATES SORTED CORRECTLY",df[boxes_coordinate_keys].head())
+    
+    
+    if plot_gt==True:
+        df_gt=pd.read_csv(path_to_gt_csv)
+        print(df_gt.describe())
+        scores=len(df_gt["filename"])*[1]
+        df_gt["score"]=scores
+        df_gt=df_gt.replace({"class": label_map_dict})
+        # label_id_offset=0
+    
+    label_id_offset = 1
+    
+    correction=[value +label_id_offset for value in df["class"].values]
+    df["class"]=correction
+    print(df["class"])
+
+    i=0
+    for id in image_ids:
+        df_image=df.loc[df['filename'] == id]
+        df_image_gt=df_gt.loc[df_gt['filename'] == id]
+        print("THIS IS IMAGE DF!!!!")
+        print(df_image.head())
+        bboxes=df_image[boxes_coordinate_keys].to_numpy()
+        bboxes_gt=df_image_gt[boxes_coordinate_keys].to_numpy()
+        
+        #check this!!!
+        detection_classes= df_image["class"].to_numpy()#+label_id_offset
+        
+        detection_classes_gt= df_image_gt["class"].values.tolist()#+label_id_offset
+
+        detection_scores= df_image["score"].values.tolist()
+        detection_scores_gt= df_image_gt["score"].values.tolist()
+        
+        print("-------------------------------------------------------------")
+        print("CLASS OPERATION",df_image["class"])
+
+        print("Bounding Boxes!!!!",bboxes)
+        print("-------------------------------------------------------------")
+
+        print("DETECTION CLASSES",detection_classes)
+        print("-------------------------------------------------------------")
+
+        print("DETECTION SCORES",detection_scores)
+
+        print("-------------------------------------------------------------")
+        i+=1
+        
+        print('Running inference for {}... '.format(PATH_TO_TEST_IMAGES), end='')
+        image_np = load_image_into_numpy_array(PATH_TO_TEST_IMAGES+"/"+id)
+        image_np_with_detections = image_np.copy()
+
+        viz_utils.visualize_boxes_and_labels_on_image_array(
+                image_np_with_detections,
+                bboxes,
+                detection_classes,
+                detection_scores,
+                category_index,
+                use_normalized_coordinates=False,
+                max_boxes_to_draw=1000,
+                min_score_thresh=box_th,
+                agnostic_mode=False,
+                line_thickness=5)
+
+        if plot_gt:
+            #agnostic mode perquè pinti en taronja (total només hi ha una classe)
+            viz_utils.visualize_boxes_and_labels_on_image_array(
+                    image_np_with_detections,
+                    bboxes_gt,
+                    detection_classes_gt,
+                    detection_scores_gt,
+                    category_index,
+                    use_normalized_coordinates=False,
+                    max_boxes_to_draw=1000,
+                    min_score_thresh=box_th,
+                    agnostic_mode=True,
+                    line_thickness=5)
+        
+        
+
+        if (image_np==image_np_with_detections).all():
+            print("TELL ME WHYYYYYYYYYYYYYYYYYYYYYY???????????????")
+
+        img_path=str((PATH_TO_OUTPUT_DIR)+"/"+id)
+        image_pil = Image.fromarray(image_np_with_detections)
+        imageio.imwrite(img_path, image_pil)
+
+        print('Image saved in '+img_path)
+        print('Done')
+
+
+    return
+
+    
+
+
+
+def get_detections(path2images,
+                    box_th = 0.10,
+                    nms_th = 0.9,
+                    data = None):
     """
     Function that performs inference and return filtered predictions
 
@@ -193,13 +320,11 @@ def print_detections(path2images,box_th = 0.10,
         path2images: an array with pathes to images
         box_th: (float) value that defines threshold for model prediction. Consider 0.25 as a value.
         nms_th: (float) value that defines threshold for non-maximum suppression. Consider 0.5 as a value.
-        to_file: (boolean). When passed as True => results are saved into a file. Writing format is
         path2image + (x1abs, y1abs, x2abs, y2abs, score, conf) for box in boxes
         data: (str) name of the dataset you passed in (e.g. test/validation)
-        path2dir: (str). Should be passed if path2images has only basenames. If full pathes provided => set False.
-        
+            
     Returs:
-        detections (dict): filtered predictions that model made
+        predictions_df (df): filtered predictions df that model made
     """
     
     print (f'Current data set is {data}')
@@ -207,13 +332,8 @@ def print_detections(path2images,box_th = 0.10,
     preds_list=[]
     for image_path in path2images:
 
-
         print("IMAGE PATH IS:,",image_path,"\n")
         filename=image_path.split("/")[-1]
-
-        if path2dir: # if a path to a directory where images are stored was passed in
-            image_path = os.path.join(path2dir, image_path.strip())
-            print("this shouldnt be on your screen!!!!")
             
         image_np = load_image_into_numpy_array(image_path)
 
@@ -265,29 +385,43 @@ def print_detections(path2images,box_th = 0.10,
                     
                     # prediction = [x1abs, y1abs, x2abs, y2abs, s, c]
                     prediction = [filename ,image_w, image_h, c, x1abs, y1abs, x2abs, y2abs, s]
+                    # prediction = [filename ,image_w, image_h, c, b[0], b[1], b[2], b[3], s]
                     preds_list.append(prediction)
 
         predictions_df = pd.DataFrame(preds_list, columns=column_name)
-            
-        
-        
+                 
     return predictions_df
 
 
 path2images=glob.glob(str(PATH_TO_TEST_IMAGES)+"/**")
-print("Paths to images at 1 are",path2images)
-print("PLOT INFERENCE ON IMAGES:")
-# inference_with_plot(path2images, 0.25)
-print("SAVE MODEL INFERENCE")
 
-path2images=glob.glob(str(PATH_TO_TEST_IMAGES)+"/**")
+path2images=glob.glob("/home/object/caterina/tf_OD_API/models/research/object_detection/data/halimeda/halimeda_new_data/train_test_3/train/**")
 
-print("Paths to images at 2 are",path2images)
+print("Path to images is",path2images)
+
+PATH_TO_OUTPUT_DIR= common + "results/halimeda/FASTER-RCNN/test3/frozen_20k/csvs/train/" 
+
+csvs_path=common+"results/halimeda/FASTER-RCNN/test3/frozen_20k/csvs/"
+
+path_to_csv=csvs_path+"predictions2.csv"
+path_to_gt_csv=csvs_path+"train_labels.csv"
 
 
-# predictions=inference_as_raw_output(path2images,box_th = 0.0, nms_th = 1, to_file = True, data = "Test4",path2dir = False)
-predictions_df=print_detections(path2images,box_th = 0.10,nms_th = 0.9,to_file = True, data = None, path2dir = False)
 
-predictions_df.to_csv(PATH_TO_OUTPUT_DIR + "/predictions.csv", index=None)
+predict=False
 
-print("PREDICTIONS:",predictions_df.head())
+if predict:
+    # Guardar les prediccions a un df "readable" per plotejar 
+    predictions_df=get_detections(path2images,box_th = 0.10,nms_th = 0.9, data = None)
+
+    predictions_df.to_csv(PATH_TO_OUTPUT_DIR + "/predictions2.csv", index=None)
+
+    print("PREDICTIONS:",predictions_df.head())
+
+else:
+# plot_bbox(path_to_csv, box_th=0.25,is_gt=True)
+    plot_bbox_from_csv(path_to_csv, box_th=0.1,plot_gt=True,path_to_gt_csv=path_to_gt_csv)
+
+# plot_bbox(path2images, box_th=0.25)
+
+

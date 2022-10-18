@@ -156,6 +156,7 @@ def draw_bounding_box_on_image_array(image,
       ymin, xmin, ymax, xmax as relative to the image.  Otherwise treat
       coordinates as absolute.
   """
+  # print("CHECK!!!!!!!!!!!!!!!!!!!!")
   image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
   draw_bounding_box_on_image(image_pil, ymin, xmin, ymax, xmax, color,
                              thickness, display_str_list,
@@ -1172,6 +1173,8 @@ def visualize_boxes_and_labels_on_image_array(
   Returns:
     uint8 numpy array with shape (img_height, img_width, 3) with overlaid boxes.
   """
+
+  # print("A PINTAAAAAAAAAAAAAAAAR")
   # Create a display string (and color) for every box location, group any boxes
   # that correspond to the same location.
   box_to_display_str_map = collections.defaultdict(list)
@@ -1183,10 +1186,15 @@ def visualize_boxes_and_labels_on_image_array(
   box_to_track_ids_map = {}
   if not max_boxes_to_draw:
     max_boxes_to_draw = boxes.shape[0]
+    print("ALGO VA MAAAAAAAAAAAAAAAAAAAAAL")
   for i in range(boxes.shape[0]):
     if max_boxes_to_draw == len(box_to_color_map):
+      print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
       break
     if scores is None or scores[i] > min_score_thresh:
+      # print("sxores",scores)
+      # print("2222222222222222222222222222222222222222222")
+          
       box = tuple(boxes[i].tolist())
       if instance_masks is not None:
         box_to_instance_masks_map[box] = instance_masks[i]
@@ -1232,6 +1240,7 @@ def visualize_boxes_and_labels_on_image_array(
 
   # Draw all boxes onto image.
   for box, color in box_to_color_map.items():
+    # print("HOLA CARACOLAAAAAAAAAA")
     ymin, xmin, ymax, xmax = box
     if instance_masks is not None:
       draw_mask_on_image_array(
@@ -1254,7 +1263,7 @@ def visualize_boxes_and_labels_on_image_array(
         ymax,
         xmax,
         color=color,
-        thickness=0 if skip_boxes else line_thickness,
+        thickness=4 if skip_boxes else line_thickness,
         display_str_list=box_to_display_str_map[box],
         use_normalized_coordinates=use_normalized_coordinates)
     if keypoints is not None:

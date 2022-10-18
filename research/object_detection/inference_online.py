@@ -4,7 +4,6 @@ https://app.neptune.ai/anton-morgunov/tf-test/n/model-for-inference-36c9b0c4-8d2
 
 """
 
-
 from importlib.resources import path
 import os # importing OS in order to make GPU visible
 import tensorflow as tf # import tensorflow
@@ -47,19 +46,15 @@ else:
 
 
 #PATHS CATERINA
-PATH_TO_CKPT="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/mines/test3"
-PATH_TO_TEST_IMAGES="/home/object/caterina/tf_OD_API/models/research/object_detection/test_images/mines_online"
-PATH_TO_OUTPUT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/test3/results_online"
-PATH_TO_LABELS="/home/object/caterina/tf_OD_API/models/research/object_detection/data/mines/label_map.pbtx"
-PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/test3/pipeline.config"
-MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/test3/model_outputs"
 
+WS_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/"
 
-# NOTE: your current working directory should be Tensorflow.
-# TODO: specify two pathes: to the pipeline.config file and to the folder with trained model.
-path2config ='/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/test3/pipeline.config'
-path2model = '/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/mines/test3/checkpoint/'
-path2label_map = PATH_TO_LABELS # TODO: provide a path to the label map file
+PATH_TO_TEST_IMAGES= WS_PATH + "/test_images/mines_online"
+PATH_TO_OUTPUT_DIR= WS_PATH + "/entrenos/mines/test3/results_online"
+
+path2config =WS_PATH + 'entrenos/no_mines/post_cartagena/FASTER-CNN/'+'pipeline.config'
+
+path2model = WS_PATH+'exported_models/no_mines/post_cartagena/FASTR-CNN/no_dataug/'+'checkpoint/'
 
 if os.path.exists(PATH_TO_OUTPUT_DIR):
     shutil.rmtree(PATH_TO_OUTPUT_DIR)

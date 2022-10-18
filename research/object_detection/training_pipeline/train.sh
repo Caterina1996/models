@@ -7,22 +7,43 @@
 # is an integer that defines how many steps should be completed in a sequence order to make a model checkpoint. Remember, that when a single step is made, your model processes a number of images equal to your batch_size defined for training.
 
 
-PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/pipeline.config"
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet/pipeline.config"
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/test3/pipeline.config"
+# MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet_2/model_outputs"
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/efficientDetD6/1/effiD6_lrcosine_min.config"
 
-MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/model_OUT_SMALL_DS"
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/efficientD5/pipeline.config"
 
-NUM_TRAIN_STEPS=10000
+# PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/post_cartagena/FASTER-RCNN/data_augmentation/"
+
+#TODO: TEST RESNET 50
+#funciona:
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/SSD_RESNET50v1_1024/test1/pipeline.config"
+
+PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/pipeline.config"
+
+MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/model_outputs"
+
+NUM_TRAIN_STEPS=40000
 SAMPLE_1_OF_N_EVAL_EXAMPLES=1
-CHECKPOINT_EVERY_N=100  #num steps fets per guardar un checkpoint.Per cada step el model processa batch_size imatges
+CHECKPOINT_EVERY_N=1000  #num steps fets per guardar un checkpoint.Per cada step el model processa batch_size imatges
 NUM_STEPS_PER_ITERATION=100
-CHECKPOINT_MAX_TO_KEEP=800
+CHECKPOINT_MAX_TO_KEEP=200
 
 
 # num_workers-> Amb aquest parametre podem indicar quants dels cores de la CPU (que a Olivia és multicore) volem usar.
 #Pot ser amb num_workers limitat ja no petaria? -> Posar al màxim?
+# cp train.sh /home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet/model_outputs/train.sh
 
+cp train.sh $MODEL_DIR/train.sh
 cd /home/object/caterina/tf_OD_API/models/research/object_detection/
 
+#clean cache memory ! check ram usage free -m
+# sudo sync
+# sudo sysctl -w vm.drop_caches=3
+# sudo sync
+
+    
 python3 model_main_tf2.py --model_dir=$MODEL_DIR --num_train_steps=$NUM_TRAIN_STEPS \
   --sample_1_of_n_eval_examples=$SAMPLE_1_OF_N_EVAL_EXAMPLES \
   --pipeline_config_path=$PIPELINE_CONFIG_PATH \

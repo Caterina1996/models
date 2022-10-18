@@ -4,17 +4,30 @@
 # MODEL_DIR="/home/object/caterina/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v2/model_outputs"
 # CHECKPOINT_DIR="/home/object/caterina/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v2/model_outputs"
 
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet/pipeline.config"
 
-PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/pipeline.config"
-# path to a directory where the evaluation job will write logs:
-MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/model_outputs_traineval"
+# MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet_2/model_outputs/"
+# CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet_2/model_outputs"
 
 
-CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/new_halimeda_test/model_outputs_traineval"
+# PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/post_cartagena/FASTER-RCNN/data_augmentation/"
 
-# NUM_TRAIN_STEPS=5000
-POST_TRAIN_EVAL=True
 
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/test2/pipeline.config"
+
+# MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/test2/model_outputs"
+PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/pipeline.config"
+
+MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/model_outputs"
+
+CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/model_outputs"
+
+NUM_TRAIN_STEPS=40000
+POST_TRAIN_EVAL=False
+
+# sudo sync
+# sudo sysctl -w vm.drop_caches=3
+# sudo sync
 cd /home/object/caterina/tf_OD_API/models/research/object_detection/
 
 python3 model_main_tf2.py \
@@ -22,6 +35,7 @@ python3 model_main_tf2.py \
     --model_dir=$MODEL_DIR \
     --checkpoint_dir=$CHECKPOINT_DIR \
     --post_train_evaluation=$POST_TRAIN_EVAL \
+    --num_train_steps=$NUM_TRAIN_STEPS \
     --alsologtostderr
 
 

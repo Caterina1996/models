@@ -34,11 +34,21 @@
 # TRAINDED_CHECKPOINT_DIR="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v1/model_outputs"
 # OUTPUT_DIRECTORY_PATH="/home/object/models/research/object_detection/exported_models/faster_rcnn_inception_resnet_v2/"
 
-PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/FASTR-CNN/dataug/more_peixos/pipeline.config"
+#MINES
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/FASTR-CNN/dataug/mines_frames_bckgrnd/pipeline.config"
+# TRAINDED_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/FASTR-CNN/dataug/mines_frames_bckgrnd/to_freeze"
+# OUTPUT_DIRECTORY_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/mines/FASTR-CNN/dataug/mines_frames_bckgrnd/frozen_20k/"
 
-TRAINDED_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/FASTR-CNN/dataug/more_peixos/to_freeze"
 
-OUTPUT_DIRECTORY_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/mines/FASTR-CNN/dataug/more_peixos/frozen_10k/"
+PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/pipeline.config"
+# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/SSD_RESNET50v1_1024/test1/pipeline.config"
+
+# TRAINDED_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/SSD_RESNET50v1_1024/test1/model_outputs"
+TRAINDED_CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/model_outputs"
+
+OUTPUT_DIRECTORY_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/halimeda/FASTER-RCNN/selec_03_10_22/frozen_40k"
+# OUTPUT_DIRECTORY_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/exported_models/halimeda/SSD_RESNET50v1_1024/test1/frozen_20k"
+
 
 cd /home/object/caterina/tf_OD_API/models/research/object_detection/
 

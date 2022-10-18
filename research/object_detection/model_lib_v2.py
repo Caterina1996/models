@@ -533,7 +533,7 @@ def train_loop(
 
   config_util.update_fine_tune_checkpoint_type(train_config)
   fine_tune_checkpoint_type = train_config.fine_tune_checkpoint_type
-  fine_tune_checkpoint_version = train_config.fine_tune_checkpoint_version
+  fine_tune_checkpoint_version = train_config.fine_tune_checkpoint_version 
 
   # Write the as-run pipeline config to disk.
   if save_final_config:

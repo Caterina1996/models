@@ -99,3 +99,11 @@ ENV/
 
 #outputs from training
 ckpt-**.data**
+ckpt-**.**
+**entrenos/**
+**data/**
+.index
+**pre_trained_models/effi**
+**_tpu-**
+**data/h**/
+**data/m**/
