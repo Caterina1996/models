@@ -67,8 +67,6 @@ path2model =  common + common2 + 'checkpoint/'
 
 
 
-
-
 # common = "/home/object/caterina/tf_OD_API/models/research/object_detection/"
 
 # PATH_TO_TEST_IMAGES= common + "test_images/halimeda/segmentables"
