@@ -20,9 +20,9 @@
 #funciona:
 # PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/SSD_RESNET50v1_1024/test1/pipeline.config"
 
-PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/pipeline.config"
+PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/faster_v1.config"
 
-MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/FASTER-RCNN/selec_03_10_22/model_outputs"
+MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/faster_v1/model_outputs"
 
 NUM_TRAIN_STEPS=40000
 SAMPLE_1_OF_N_EVAL_EXAMPLES=1
@@ -36,7 +36,7 @@ CHECKPOINT_MAX_TO_KEEP=200
 # cp train.sh /home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet/model_outputs/train.sh
 
 cp train.sh $MODEL_DIR/train.sh
-cd /home/object/caterina/tf_OD_API/models/research/object_detection/
+cd /home/plome/models/research/object_detection/
 
 #clean cache memory ! check ram usage free -m
 # sudo sync
