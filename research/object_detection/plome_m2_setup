@@ -1,0 +1,119 @@
+PLOME M2 SETUP:
+
+ubuntu 20.04 - normal installation - check xxxx, check 3rd party
+
+Software & updates - additional drivers - nvidia 520
+
+reboot
+
+--- CUDA ---
+
+$ wget https://developer.download.nvidia.com/compute/cuda/11.6.0/local_installers/cuda_11.6.0_510.39.01_linux.run
+
+$ sudo sh cuda_11.6.0_510.39.01_linux.run
+continue
+accept
+uncheck nvidia driver installation
+install
+wait................
+yes
+
+cat /usr/local/cuda/version.json
+
+% $ sudo apt install nvidia-cuda-toolkit
+% $ nvcc  --version  (sale version anterior pero funciona)
+
+--- CUDNN ---
+
+https://developer.nvidia.com/rdp/cudnn-download
+Download cuDNN v8.6.0 (October 3rd, 2022), for CUDA 11.x
+Local Installer for Linux x86_64 (Tar)
+
+$ tar -xvf cudnn-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz 
+
+$ sudo cp cudnn-*-archive/include/cudnn*.h /usr/local/cuda/include 
+$ sudo cp -P cudnn-*-archive/lib/libcudnn* /usr/local/cuda/lib64 
+$ sudo chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
+
+# CUDA related exports
+$ export PATH=/usr/local/cuda-11.6/bin${PATH:+:${PATH}}
+$ export LD_LIBRARY_PATH=/usr/local/cuda-11.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+
+--- conda ---
+https://docs.anaconda.com/anaconda/install/linux/
+$ apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
+$ sh Anaconda3-2022.10-Linux-x86_64.sh 
+$ conda config --set auto_activate_base false
+$ conda create --name plome python=3.8
+$ conda activate plome
+
+
+--- tensorflow ---
+$ pip install --ignore-installed --upgrade tensorflow==2.8.0
+($ pip install protobuf==3.20.*)
+
+
+--- object detection ---
+$ sudo apt install git
+$ git clone https://github.com/tensorflow/models.git
+$ sudo apt install protobuf-compiler
+$ cd models/research
+$ protoc object_detection/protos/*.proto --python_out=.
+
+$ cd object_detection/packages/tf2
+$ nano setup.py
+delete tensorflow requirement
+delete kereas requirement
+modify   'tensorflow_io==0.25',
+$ cd ../../..
+$ cp object_detection/packages/tf2/setup.py .
+$ python -m pip install --use-feature=2020-resolver .
+
+add to bash: export PYTHONPATH=$PYTHONPATH:/home/plome/models
+$ pip install pyyaml
+$ pip install gin-config
+$ pip install tensorflow-addons==0.17.1
+
+
+--- checks ---
+$ python
+$ import tensorflow
+$ import keras
+$ ctrl+d
+$ python -c "import tensorflow as tf;print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+$ python object_detection/builders/model_builder_tf2_test.py
+
+
+
+
+--- train ---
+
+when train.py -> AttributeError: module 'keras.api._v2.keras.optimizers' has no attribute 'experimental'
+
+$ code models/official/modeling/optimization/optimizer_factory.py
+
+edit lines 31 and 33
+
+'sgd_experimental': tf.keras.optimizers.experimental.SGD,    -->  'sgd_experimental': tf.keras.optimizers.SGD,
+'adam_experimental': tf.keras.optimizers.experimental.Adam,  --> 'adam_experimental': tf.keras.optimizers.Adam,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
