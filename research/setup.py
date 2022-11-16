@@ -18,9 +18,7 @@ REQUIRED_PACKAGES = [
     'lvis',
     'scipy',
     'pandas',
-    'tf-models-official>=2.5.1',
-    'tensorflow_io',
-    'keras'
+    'tensorflow_io==0.25'
 ]
 
 setup(
