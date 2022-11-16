@@ -1,21 +1,6 @@
 
 
-# PIPELINE_CONFIG_PATH="/home/object/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v2/pipeline.config"
-# MODEL_DIR="/home/object/caterina/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v2/model_outputs"
-# CHECKPOINT_DIR="/home/object/caterina/models/research/object_detection/training/faster_rcnn_inception_resnet_v2/v2/model_outputs"
 
-# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet/pipeline.config"
-
-# MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet_2/model_outputs/"
-# CHECKPOINT_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/mines/centernet_2/model_outputs"
-
-
-# PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/no_mines/post_cartagena/FASTER-RCNN/data_augmentation/"
-
-
-# PIPELINE_CONFIG_PATH="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/test2/pipeline.config"
-
-# MODEL_DIR="/home/object/caterina/tf_OD_API/models/research/object_detection/entrenos/halimeda/halimeda_new_data/test2/model_outputs"
 PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/faster_v1.config"
 
 MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/faster_v1/model_outputs"
