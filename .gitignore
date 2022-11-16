@@ -111,6 +111,7 @@ research/object_detection/data/**
 research/object_detection/entrenos/halimeda/**
 research/object_detection/test_images/**
 research/object_detection/exported_models/**
+research/object_detection/pre_trained_models/**
 research/object_detection/imgs/**
 research/object_detection/results/**
 research/object_detection/eval/**
