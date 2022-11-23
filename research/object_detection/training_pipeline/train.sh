@@ -13,13 +13,13 @@
 # sudo sysctl -w vm.drop_caches=3
 # sudo sync
 
-PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/efficient_d2.config"
+PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/efficient_d3_lr2.config"
 
 MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/efficient_d2/model_outputs"
 
-NUM_TRAIN_STEPS=40000
+NUM_TRAIN_STEPS=80000
 SAMPLE_1_OF_N_EVAL_EXAMPLES=1
-CHECKPOINT_EVERY_N=100  
+CHECKPOINT_EVERY_N=1000  
 NUM_STEPS_PER_ITERATION=100
 CHECKPOINT_MAX_TO_KEEP=200
 

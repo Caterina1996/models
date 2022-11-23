@@ -1,13 +1,12 @@
 
 
-
-PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/efficient_d2.config"
+PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/efficient_d3_lr2.config"
 
 MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/efficient_d2/model_outputs"
 
 CHECKPOINT_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/efficient_d2/model_outputs"
 
-NUM_TRAIN_STEPS=40000
+NUM_TRAIN_STEPS=80000
 POST_TRAIN_EVAL=False
 
 # sudo sync
