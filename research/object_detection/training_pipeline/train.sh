@@ -6,10 +6,12 @@
 # <int for the number of steps per checkpoint> 
 # is an integer that defines how many steps should be completed in a sequence order to make a model checkpoint. Remember, that when a single step is made, your model processes a number of images equal to your batch_size defined for training.
 
-# num_workers-> Amb aquest parametre podem indicar quants dels cores de la CPU (que a Olivia és multicore) volem usar.
-#Pot ser amb num_workers limitat ja no petaria? -> Posar al màxim?
+# num_workers
 
-
+#clean cache memory ! check ram usage free -m
+# sudo sync
+# sudo sysctl -w vm.drop_caches=3
+# sudo sync
 
 PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/efficient_d2.config"
 
@@ -17,7 +19,7 @@ MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/effici
 
 NUM_TRAIN_STEPS=40000
 SAMPLE_1_OF_N_EVAL_EXAMPLES=1
-CHECKPOINT_EVERY_N=100  #num steps fets per guardar un checkpoint.Per cada step el model processa batch_size imatges
+CHECKPOINT_EVERY_N=100  
 NUM_STEPS_PER_ITERATION=100
 CHECKPOINT_MAX_TO_KEEP=200
 
@@ -25,10 +27,6 @@ cp $PIPELINE_CONFIG_PATH $MODEL_DIR/pipeline.config
 cp train.sh $MODEL_DIR/train.sh
 cd /home/plome/models/research/object_detection/
 
-#clean cache memory ! check ram usage free -m
-# sudo sync
-# sudo sysctl -w vm.drop_caches=3
-# sudo sync
 
 python3 model_main_tf2.py --model_dir=$MODEL_DIR --num_train_steps=$NUM_TRAIN_STEPS \
   --sample_1_of_n_eval_examples=$SAMPLE_1_OF_N_EVAL_EXAMPLES \
