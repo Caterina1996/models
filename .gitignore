@@ -105,7 +105,7 @@ ckpt-**.**
 .index
 **pre_trained_models/effi**
 **_tpu-**
-**data/**/
+
 research/object_detection/data/SIMBAAD/**
 research/object_detection/data/**
 research/object_detection/entrenos/halimeda/**
