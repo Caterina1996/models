@@ -31,6 +31,7 @@ from absl import flags
 import tensorflow.compat.v2 as tf
 from object_detection import model_lib_v2
 from object_detection import eval_post_train
+import os
 
 flags.DEFINE_string('pipeline_config_path', None, 'Path to pipeline config '
                     'file.')
@@ -79,6 +80,8 @@ FLAGS = flags.FLAGS
 LIMIT_GPU=True
 # CHECKPOINT_MAX_TO_KEEP=3
 # NUM_STEPS_PER_ITERATION=FLAGS.num_steps_per_iteration
+
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 def main(unused_argv):
   flags.mark_flag_as_required('model_dir')

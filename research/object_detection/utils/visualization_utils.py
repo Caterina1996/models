@@ -1174,7 +1174,6 @@ def visualize_boxes_and_labels_on_image_array(
     uint8 numpy array with shape (img_height, img_width, 3) with overlaid boxes.
   """
 
-  # print("A PINTAAAAAAAAAAAAAAAAR")
   # Create a display string (and color) for every box location, group any boxes
   # that correspond to the same location.
   box_to_display_str_map = collections.defaultdict(list)
@@ -1186,14 +1185,10 @@ def visualize_boxes_and_labels_on_image_array(
   box_to_track_ids_map = {}
   if not max_boxes_to_draw:
     max_boxes_to_draw = boxes.shape[0]
-    print("ALGO VA MAAAAAAAAAAAAAAAAAAAAAL")
   for i in range(boxes.shape[0]):
     if max_boxes_to_draw == len(box_to_color_map):
-      print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
       break
     if scores is None or scores[i] > min_score_thresh:
-      # print("sxores",scores)
-      # print("2222222222222222222222222222222222222222222")
           
       box = tuple(boxes[i].tolist())
       if instance_masks is not None:

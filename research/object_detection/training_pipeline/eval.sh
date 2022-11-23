@@ -1,10 +1,11 @@
 
 
 
-PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/faster_v1.config"
+PIPELINE_CONFIG_PATH="/home/plome/models/research/object_detection/entrenos/pipelines/efficient_d2.config"
 
-MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/faster_v1/model_outputs"
-CHECKPOINT_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/faster_v1/model_outputs"
+MODEL_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/efficient_d2/model_outputs"
+
+CHECKPOINT_DIR="/home/plome/models/research/object_detection/entrenos/halimeda/efficient_d2/model_outputs"
 
 NUM_TRAIN_STEPS=40000
 POST_TRAIN_EVAL=False
