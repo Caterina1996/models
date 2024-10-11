@@ -3,8 +3,6 @@ Inference script modified from
 https://app.neptune.ai/anton-morgunov/tf-test/n/model-for-inference-36c9b0c4-8d20-4d5a-aa54-5240cc8ce764/6f67c0e3-283c-45de-ae56-405aecd736c0
 
 """
-
-
 from importlib.resources import path
 import os # importing OS in order to make GPU visible
 import tensorflow as tf # import tensorflow
@@ -16,7 +14,7 @@ from PIL import Image
 from matplotlib import pyplot as plt
 import shutil 
 from tqdm import tqdm
-import sys # importyng sys in order to access scripts located in a different folder¡
+import sys # importyng sys in order to access scripts located in a different folder
 import glob
 import PIL.Image as Image
 import PIL.ImageColor as ImageColor
